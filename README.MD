@@ -1,7 +1,6 @@
 # FSM
 ## Requirements
 From current business requirement, we'd need to be able to separate the states into different levels.
-Initially there will be 2 levels (parent & child), but for further development there might be more.
 
 L1: MAIN, DEMOGRAPHICS, SURVEY, PERSONAL LIBRARY
 L2: SURVEY:
@@ -31,15 +30,13 @@ of this document (i.e. MySQL, Firebase, etc). We'll only talk about how it's rep
 
 To make complex program, when state needs to transition to other states, it needs more information
 to figure out which state to move into. For example, we're at MAIN and want to move to DEMOGRAPHIC
-when user hasn't filled up their demographics information yet. Here, it would means that when demographics field
-on user state is null, we'll do that. But since we can't pre-load everything into the state, we might resort
-into creating functions that FSM programmer can use.
-
-functions: {
-  demographics
-}
+when user hasn't filled up their demographics information yet. Here, it would mean that when demographics field
+on user state is null, we'll do that. But since at some point we'll have more data than
+we can pre-load into the state, we might resort
+into creating functions that FSM programmer can use, which would do asynchronous operation on call.
 
 ### Examples
+```
 USER STATE:
 {
   company: {
@@ -56,11 +53,22 @@ USER STATE:
 FSM:
 {
   id: "MAIN",
-  // The logic is iterated in the same order as what it appears on the array
   logics: [
     {
       condition: 'state.didIntroduction !== true',
       nextState: 'MAIN_introduction'
+    },
+    {
+      condition: null
+      messages: [
+        'How can I help you? :)'
+      ],
+      responses: [
+        { type: 'button', text: 'Who are you again?', action: 'MAIN_introduction' },
+        { type: 'button', text: 'Update my demographics information', action: 'MAIN_demographic' }
+
+      ],
+      nextState: null
     }
   ]
 },
@@ -68,21 +76,34 @@ FSM:
   id: 'MAIN_introduction',
   logics: [
     {
+      condition: null,
       messages: [
         'Hi there, nice to meet you!',
         'My name is Cobbie, your personal assistant :)'
       ],
       responses: [
         { type: 'button', text: 'Nice to meet you too, Cobbie!'}
-      ]
+      ],
+      nextState: null
     },
     {
+      condition: null,
       messages: [
         'I\'m here to help you make ${state.company.name} the best place to work at!',
         'll be asking you questions regarding to your experience <br>working at P&G. But don't fret, all the information is anonymous.<br>I am fully committed to protect your privacy :)<br><br><a href="googledocslinkhere">Learn More</a>',
         'We'll use the collective feedback across the company in order to make suggestion to HR about how P&G can be improve as a whole.',
         'In addition to that, I will also provide well being-related materials personalized just for you :)'
+      ],
+      responses: []
+    },
+    {
+      condition: null,
+      messages: [],
+      responses: [],
+      action: [
+        {  }
       ]
+      nextState: 'MAIN_introduction_faq'
     }
   ]
 },
@@ -90,10 +111,11 @@ FSM:
   id: 'MAIN_introduction_faq',
   logics: [
     {
+      condition: null,
       messages: [
         'What questions do you have for me? :)'
       ],
-      response: [
+      responses: [
         { type: 'button', text: 'How can we help improving P&G?', nextState: 'MAIN_introduction_faq_how-cobbie-improve-corporation' },
         { type: 'button', text: 'Nope, no more question!', action: '', nextState: 'MAIN' }
       ]
@@ -103,19 +125,134 @@ FSM:
 {
   id: 'MAIN_introduction_faq_how-cobbie-improve-corporation',
   logics: [
-    messages: [
-      'We will help ${state.company.name} become a better place through sharing personal experience working there',
-      'I will gather the experiences of all the employees throughout ${state.company.name}',
-      'All of these data that I gather anonymously, will then be collected, studied, and summarized.',
-      'Through the summary, I'll provide ${state.company.name} HR department with information on how ${state.company.name}
-       can be improved'
-    ],
-    response: [
-      { type: 'button', text: 'Got it!', nextState: 'MAIN_introduction_faq' }
-    ]
+    {
+      condition: null,
+      messages: [
+        'We will help ${state.company.name} become a better place through collective feedbacks of its employees',
+        'I will gather the experiences of all the employees throughout ${state.company.name}',
+        'All of these data that are gathered anonymously will be collected, and analysed',
+        'Through the analysis, I'll provide ${state.company.name} HRD with information on how it can be improved'
+      ],
+      responses: [
+        { type: 'button', text: 'Got it!', nextState: 'MAIN_introduction_faq' }
+      ]
+    }
   ]
+},
+{
+  id: 'MAIN_demographics',
+  logics: [
+    {
+      condition: null,
+      messages: [
+        'Before we can start improving ${state.company.name}, could you please provide some demographics information? This will only take 5 minutes.',
+        'And if you prefer not to answer a question, you can always skip it',
+      ]
+      responses: [
+        { type: 'button', text: 'Sure!' },
+        { type: 'button', text: 'I'll do it later', nextState: 'MAIN', clearState: true }
+      ]
+    },
+    {
+      condition: null,
+      messages: [
+        'How old are you?'
+      ],
+      responses: [
+        { type: 'button', text: '18-24', action: setDemographics('age', '18-24') },
+        { type: 'button', text: '25-34', action: setDemographics('age', '25-34') },
+        { type: 'button', text: '35-44', action: setDemographics('age', '35-44') },
+        { type: 'button', text: '45-54', action: setDemographics('age', '45-54') },
+        { type: 'button', text: '54+', action: setDemographics('age', '54+') },
+        { type: 'button', text: 'I prefer not to say', action: setDemographics('age', 'NA') }
+      ]
+    },
+    {
+      condition: null,
+      messages: [
+        'What is your gender?'
+      ],
+      responses: [
+        { type: 'button', text: 'Male', action: setDemographics('gender', 'male') },
+        { type: 'button', text: 'Female', action: setDemographics('gender', 'female') },
+        { type: 'text', text: 'Other', action: setDemographics('gender', '${input}') },
+        { type: 'button', text: 'I prefer not to say', action: setDemographics('age', 'NA') }
+      ]
+    },
+    {
+      condition: null,
+      messages: [
+        'Are you Spanish or Latino?'
+      ],
+      responses: [
+        { type: 'button', text: 'Yes', action: setDemographics('spanishOrLatino', true) },
+        { type: 'button', text: 'No', action: setDemographics('spanishOrLatino', false) },
+        { type: 'button', text: 'I prefer not to say', action: setDemographics('spanishOrLatino', 'NA') }
+      ]
+    },
+    {
+      condition: null,
+      messages: [
+        'What is your ethnicity?'
+      ],
+      responses: [
+        { type: 'checkbox', text: 'African American', value: 'african-american', id: 'ethnicities' },
+        { type: 'checkbox', text: 'Asian', value: 'asian', id: 'ethnicities' },
+        { type: 'checkbox', text: 'Native American', value: 'native-american', id: 'ethnicities' },
+        { type: 'checkbox', text: 'White', value: 'white', id: 'ethnicities' }
+      ],
+      action: 'setDemographics('ethnicity', ethnicities)
+    },
+    {
+      condition: null,
+      messages: [
+        'What's your highest education?'
+      ],
+      responses: [
+        { type: 'button', text: 'Less than highschool', action: setDemographics('highestEducation', 'less-than-highschool') },
+        { type: 'button', text: 'Highschool diploma or equivalent', action: setDemographics('highestEducation', 'highschool-diploma') },
+        { type: 'text', text: 'Bachelor degree', action: setDemographics('highestEducation', 'bachelor-degree') },
+        { type: 'text', text: 'Master degree', action: setDemographics('highestEducation', 'master-degree') },
+        { type: 'text', text: 'Doctorate degree', action: setDemographics('highestEducation', 'doctorate-degree') },
+        { type: 'button', text: 'I prefer not to say', action: setDemographics('highestEducation', 'NA') }
+      ]
+    },
+    {
+      condition: null,
+      messages: [
+        'What's your marital status?'
+      ],
+      responses: [
+        { type: 'button', text: 'Married', action: setDemographics('maritalStatus', 'married') },
+        { type: 'button', text: 'Divorced', action: setDemographics('maritalStatus', 'divorced') },
+        { type: 'text', text: 'Separated', action: setDemographics('maritalStatus', 'separated') },
+        { type: 'text', text: 'Widowed', action: setDemographics('maritalStatus', 'widowed') },
+        { type: 'text', text: 'Single', action: setDemographics('maritalStatus', 'single') },
+        { type: 'button', text: 'I prefer not to say', action: setDemographics('maritalStatus', 'NA') }
+      ]
+    },
+    {
+      condition: null,
+      messages: [
+        'How many years have you been with ${state.company.name}?'
+      ],
+      responses: [
+        { type: 'button', text: '0-2', action: setDemographics('yearsWithCompany', '0-2') },
+        { type: 'button', text: '3-5', action: setDemographics('yearsWithCompany', '3-5') },
+        { type: 'text', text: '6-10', action: setDemographics('yearsWithCompany', '6-10') },
+        { type: 'text', text: '11-15', action: setDemographics('yearsWithCompany', '11-15') },
+        { type: 'text', text: '15+', action: setDemographics('yearsWithCompany', '15+') },
+        { type: 'button', text: 'I prefer not to say', action: setDemographics('yearsWithCompany', 'NA') }
+      ]
+    },
+  ],
 }
+```
 
-
-FSM Notes:
+### FSM Notes:
 clearStack: true: // By default, when there's no more logics in a state, it will go back to whatever previous state that leads to it. So if you want to clear out remembered states, set this to true
+
+### Parsing
+For UI presentation, we can do several things to make visual improvements:
+1. Create an effect as if the bot is typing. The length of typing is correlated to the length of the sentence
+2. 
