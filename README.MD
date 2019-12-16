@@ -529,7 +529,8 @@ FSM:
         surveyTopicName: 'Personal Accomplishment'
       },
       responses: surveyResponsesTemplates.template2
-    },
+    }
+  ]
 }
 
 surveyResponsesTemplates: {
