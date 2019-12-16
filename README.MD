@@ -59,6 +59,10 @@ FSM:
       nextState: 'MAIN_introduction'
     },
     {
+      condition: 'state.didDemographics !== true',
+      nextState: 'MAIN_demographics'
+    },
+    {
       condition: null
       messages: [
         'How can I help you? :)'
@@ -91,8 +95,7 @@ FSM:
       messages: [
         'I\'m here to help you make ${state.company.name} the best place to work at!',
         'll be asking you questions regarding to your experience <br>working at P&G. But don't fret, all the information is anonymous.<br>I am fully committed to protect your privacy :)<br><br><a href="googledocslinkhere">Learn More</a>',
-        'We'll use the collective feedback across the company in order to make suggestion to HR about how P&G can be improve as a whole.',
-        'In addition to that, I will also provide well being-related materials personalized just for you :)'
+        'I will then use the collective feedbacks from employees at ${state.company.name} to provide feedback to the HRD, which in turn could make company-wide initiatives to make everyone healthier, happier, and more productive',
       ],
       responses: []
     },
@@ -117,7 +120,7 @@ FSM:
       ],
       responses: [
         { type: 'button', text: 'How can we help improving P&G?', nextState: 'MAIN_introduction_faq_how-cobbie-improve-corporation' },
-        { type: 'button', text: 'Nope, no more question!', action: '', nextState: 'MAIN' }
+        { type: 'button', text: 'Nope, no more question!', action: '' }
       ]
     }
   ]
@@ -134,7 +137,7 @@ FSM:
         'Through the analysis, I'll provide ${state.company.name} HRD with information on how it can be improved'
       ],
       responses: [
-        { type: 'button', text: 'Got it!', nextState: 'MAIN_introduction_faq' }
+        { type: 'button', text: 'Got it!' }
       ]
     }
   ]
@@ -245,6 +248,305 @@ FSM:
         { type: 'button', text: 'I prefer not to say', action: setDemographics('yearsWithCompany', 'NA') }
       ]
     },
+  ],
+},
+{
+  id: 'MAIN_survey',
+  logics: [
+    {
+      messages: [
+        'To get started improving ${state.company.name}, I need you to provide honest feedback abour your working experience',
+        'It's just as how very often people say that sharing is caring :)',
+        'This survey is going to take 10 minutes to complete and needs to be taken without distractions.',
+      ]
+      responses: [
+        { type: 'button', text: 'Sure thing, I have an undistracted 10 minutes!' },
+        { type: 'button', text: 'Umm, who are you again?', nextState: 'MAIN_introduction' }
+      ]
+    }, {
+      messages: [
+        `I feel there's too much work to be completed`
+      ],
+      variables: {
+        surveyTopicId: 1,
+        surveyTopicName: 'Task Volume'
+      },
+      responses: surveyResponsesTemplates.template1
+    }, {
+      messages: [
+        `I often feel under pressure`
+      ],
+      variables: {
+        surveyTopicId: 2,
+        surveyTopicName: 'Task Volume'
+      },
+      responses: surveyResponsesTemplates.template1
+    }, {
+      messages: [
+        `There is not enough time to finish my tasks, projects, and assignments.`
+      ],
+      variables: {
+        surveyTopicId: 3,
+        surveyTopicName: 'Task Volume'
+      },
+      responses: surveyResponsesTemplates.template1
+    }, {
+      messages: [
+        `I control how my work is completed`
+      ],
+      variables: {
+        surveyTopicId: 4,
+        surveyTopicName: 'Control'
+      },
+      responses: surveyResponsesTemplates.template2
+    }, {
+      condition: null,
+      messages: [
+        `I am involved in decisions that impact myself and my colleagues.`
+      ],
+      variables: {
+        surveyTopicId: 5,
+        surveyTopicName: 'Control'
+      },
+      responses: surveyResponsesTemplates.template2
+    }, {
+      condition: null,
+      messages: [
+        `Successful people at my company can control their careers.`
+      ],
+      variables: {
+        surveyTopicId: 6,
+        surveyTopicName: 'Control'
+      },
+      responses: surveyResponsesTemplates.template2
+    }, {
+      condition: null,
+      messages: [
+        `My pay is equal to the work I do.`
+      ],
+      variables: {
+        surveyTopicId: 7,
+        surveyTopicName: 'Pay and Incentives'
+      },
+      responses: surveyResponsesTemplates.template1
+    }, {
+      condition: null,
+      messages: [
+        `People at the office appreciate the work I do.`
+      ],
+      variables: {
+        surveyTopicId: 8,
+        surveyTopicName: 'Pay and Incentives'
+      },
+      responses: surveyResponsesTemplates.template1
+    }, {
+      condition: null,
+      messages: [
+        `I feel I can progress and grow at the company`
+      ],
+      variables: {
+        surveyTopicId: 9,
+        surveyTopicName: 'Pay and Incentives'
+      },
+      responses: surveyResponsesTemplates.template1
+    }, {
+      condition: null,
+      messages: [
+        `I am comfortable communicating with those I work closely with.`
+      ],
+      variables: {
+        surveyTopicId: 10,
+        surveyTopicName: 'Community'
+      },
+      responses: surveyResponsesTemplates.template2
+    }, {
+      condition: null,
+      messages: [
+        `I consider those I work with as my friends.`
+      ],
+      variables: {
+        surveyTopicId: 11,
+        surveyTopicName: 'Community'
+      },
+      responses: surveyResponsesTemplates.template2
+    }, {
+      condition: null,
+      messages: [
+        `I feel comfortable around others at work.`
+      ],
+      variables: {
+        surveyTopicId: 12,
+        surveyTopicName: 'Community
+      },
+      responses: surveyResponsesTemplates.template2
+    }, {
+      condition: null,
+      messages: [
+        `I feel there is little favoritism at work.`
+      ],
+      variables: {
+        surveyTopicId: 13,
+        surveyTopicName: 'Justice'
+      },
+      responses: surveyResponsesTemplates.template2
+    }, {
+      condition: null,
+      messages: [
+        `The leadership in my organization treats all employees equally.`
+      ],
+      variables: {
+        surveyTopicId: 14,
+        surveyTopicName: 'Justice'
+      },
+      responses: surveyResponsesTemplates.template2
+    }, {
+      condition: null,
+      messages: [
+        `People at work me in a professional manner.`
+      ],
+      variables: {
+        surveyTopicId: 15,
+        surveyTopicName: 'Justice'
+      },
+      responses: surveyResponsesTemplates.template2
+    }, {
+      condition: null,
+      messages: [
+        `I feel my values align with the organization.`
+      ],
+      variables: {
+        surveyTopicId: 16,
+        surveyTopicName: 'Standards'
+      },
+      responses: surveyResponsesTemplates.template2
+    }, {
+      condition: null,
+      messages: [
+        `The purpose and mission of the organization inspire me.`
+      ],
+      variables: {
+        surveyTopicId: 17,
+        surveyTopicName: 'Standards'
+      },
+      responses: surveyResponsesTemplates.template2
+    }, {
+      condition: null,
+      messages: [
+        `I am likely to recommend my organization as a good place to work.`
+      ],
+      variables: {
+        surveyTopicId: 18,
+        surveyTopicName: 'Standards'
+      },
+      responses: surveyResponsesTemplates.template2
+    }, {
+      condition: null,
+      messages: [
+        `I feel emotionally drained after work.`
+      ],
+      variables: {
+        surveyTopicId: 19,
+        surveyTopicName: 'Exhaustion'
+      },
+      responses: surveyResponsesTemplates.template1
+    }, {
+      condition: null,
+      messages: [
+        `I feel tired in the morning knowing I have to go to work.`
+      ],
+      variables: {
+        surveyTopicId: 20,
+        surveyTopicName: 'Exhaustion'
+      },
+      responses: surveyResponsesTemplates.template1
+    }, {
+      condition: null,
+      messages: [
+        `Everything I do at work requires a lot of energy.`
+      ],
+      variables: {
+        surveyTopicId: 21,
+        surveyTopicName: 'Exhaustion'
+      },
+      responses: surveyResponsesTemplates.template1
+    }, {
+      condition: null,
+      messages: [
+        `I view people at work as objects.`
+      ],
+      variables: {
+        surveyTopicId: 22,
+        surveyTopicName: 'Depersonalization'
+      },
+      responses: surveyResponsesTemplates.template1
+    }, {
+      condition: null,
+      messages: [
+        `At work, I am more uncaring.`
+      ],
+      variables: {
+        surveyTopicId: 23,
+        surveyTopicName: 'Depersonalization'
+      },
+      responses: surveyResponsesTemplates.template1
+    }, {
+      condition: null,
+      messages: [
+        `I do not care what happens to people at work.`
+      ],
+      variables: {
+        surveyTopicId: 24,
+        surveyTopicName: 'Depersonalization'
+      },
+      responses: surveyResponsesTemplates.template1
+    }, {
+      condition: null,
+      messages: [
+        `I deal with people at work effectively.`
+      ],
+      variables: {
+        surveyTopicId: 25,
+        surveyTopicName: 'Personal Accomplishment'
+      },
+      responses: surveyResponsesTemplates.template2
+    }, {
+      condition: null,
+      messages: [
+        `I feel my own work has an impact.`
+      ],
+      variables: {
+        surveyTopicId: 26,
+        surveyTopicName: 'Personal Accomplishment'
+      },
+      responses: surveyResponsesTemplates.template2
+    }, {
+      condition: null,
+      messages: [
+        `My organziation makes me feel excited to work.`
+      ],
+      variables: {
+        surveyTopicId: 27,
+        surveyTopicName: 'Personal Accomplishment'
+      },
+      responses: surveyResponsesTemplates.template2
+    },
+}
+
+surveyResponsesTemplates: {
+  template1: [
+    { type: 'button', text: '5 - Strongly Agree', action: 'fillSurvey(surveySessionId, surveyTopicId, 5)' },
+    { type: 'button', text: '4 - Agree', action: 'fillSurvey(surveySessionId, surveyTopicId, 4)' },
+    { type: 'text', text: '3 - Neutral', action: 'fillSurvey(surveySessionId, surveyTopicId, 3)' },
+    { type: 'text', text: '2 - Disagree', action: 'fillSurvey(surveySessionId, surveyTopicId, 2)' },
+    { type: 'text', text: '1 - Strongly Disagree', action: 'fillSurvey(surveySessionId, surveyTopicId, 1)' }
+  ],
+  // Reverse scoring
+  template2: [
+    { type: 'button', text: '5 - Strongly Agree', action: 'fillSurvey(surveySessionId, surveyTopicId, 1)' },
+    { type: 'button', text: '4 - Agree', action: 'fillSurvey(surveySessionId, surveyTopicId, 2)' },
+    { type: 'text', text: '3 - Neutral', action: 'fillSurvey(surveySessionId, surveyTopicId, 3)' },
+    { type: 'text', text: '2 - Disagree', action: 'fillSurvey(surveySessionId, surveyTopicId, 4)' },
+    { type: 'text', text: '1 - Strongly Disagree', action: 'fillSurvey(surveySessionId, surveyTopicId, 5)' }
   ],
 }
 ```
