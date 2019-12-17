@@ -42,8 +42,8 @@ const states = [
           'How can I help you? :)'
         ],
         responses: [
-          { type: 'button', text: 'Who are you again?', action: 'MAIN_introduction' },
-          { type: 'button', text: 'Update my demographics information', action: 'MAIN_demographic' }
+          { type: 'button', text: 'Who are you again?', nextState: 'MAIN_introduction' },
+          { type: 'button', text: 'Update my demographics information', nextState: 'MAIN_demographic' }
 
         ],
         nextState: null
@@ -154,6 +154,11 @@ const states = [
           { type: 'button', text: 'Female', action: `setDemographics('gender', 'female')` },
           { type: 'text', text: 'Other', action: `setDemographics('gender', input)` },
           { type: 'button', text: 'I prefer not to say', action: `setDemographics('age', 'NA')` }
+        ]
+      },
+      {
+        messages: [
+          'Alright! Thanks for taking the time! :)'
         ]
       }
     ],
