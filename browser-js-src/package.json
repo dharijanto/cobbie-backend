@@ -1,0 +1,47 @@
+{
+  "name": "browserify-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "browserify-shim": {
+    "cmsRootPath": "global:rootPath",
+    "jquery": "global:$"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "aliasify": {
+    "react": "preact-compat"
+  },
+  "scripts": {
+    "start": "node --max-old-space-size=4096 watch",
+    "build": "node build"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bootstrap": "^4.1.2",
+    "@types/jquery": "^3.3.4",
+    "@types/summernote": "^0.8.0",
+    "@types/toastr": "^2.1.35",
+    "axios": "^0.18.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babelify": "^7.3.0",
+    "browserify": "^14.4.0",
+    "browserify-shim": "^3.8.14",
+    "codemirror": "^5.31.0",
+    "inotify": "^1.4.6",
+    "jQuery.print": "^1.5.1",
+    "lodash": "^4.17.11",
+    "marked": "^0.3.6",
+    "nc-image-picker": "^1.2.1",
+    "nc-input-library": "^1.5.2",
+    "toastr": "^2.1.4",
+    "tsify": "^4.0.0",
+    "typescript": "^3.0.0-dev.20180630",
+    "uglifyify": "^4.0.4",
+    "watchify": "^3.11.1"
+  }
+}

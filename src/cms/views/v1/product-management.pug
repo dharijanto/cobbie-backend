@@ -1,0 +1,17 @@
+extends /layout.pug
+
+append links
+  link(rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css")
+  link(rel="stylesheet" type="text/css" href=rootifyPath('assets/css/style.css'))
+  link(rel="stylesheet" type="text/css" href=rootifyPath('assets/css/nprogress.css'))
+  link(rel="stylesheet" type="text/css" href=rootifyPath('assets/css/toastr.min.css'))
+
+block content
+  .row
+    .col-md-12
+      hr
+      h1.text-center Template
+      hr
+append scripts
+  // Rooth path is pug-rendered
+  script(src=rootifyPath('assets/js/product-cms-bundle.js'))

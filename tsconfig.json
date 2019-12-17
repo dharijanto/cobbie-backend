@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "noImplicitReturns": true,
+    "target": "ES6",
+    "module": "commonjs",
+    "outDir": "./dist"
+  },
+  "include": [
+    "src/**/*.js",
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/cms/views/**/*",
+    "src/app/views/**/*"
+  ]
+}

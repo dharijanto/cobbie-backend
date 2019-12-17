@@ -1,0 +1,36 @@
+{
+  "name": "app_ntech",
+  "version": "1.0.0",
+  "description": "",
+  "main": "db-structure.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/nusantaracloud/dynamichost-template.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/nusantaracloud/dynamichost-template#readme",
+  "devDependencies": {
+    "@types/express-flash": "0.0.0",
+    "@types/express-session": "^1.15.10",
+    "@types/multer": "^1.3.7",
+    "@types/passport": "^0.4.5",
+    "fancy-log": "^1.3.3",
+    "gulp": "^3.9.1",
+    "gulp-copy": "^4.0.1",
+    "gulp-sass": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-typescript": "^5.0.0",
+    "gulp-uglify-es": "^1.0.4",
+    "gulp-watch": "^5.0.1",
+    "sass": "^1.17.2",
+    "tsconfig": "^7.0.0",
+    "typescript": "^3.0.0-dev.20180619"
+  },
+  "dependencies": {
+    "fancylog": "^4.0.2"
+  }
+}
