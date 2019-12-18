@@ -22,7 +22,7 @@ const sitesDepsFiles = [
 const sitesFiles = project.config.include
   .concat(project.config.exclude.map(excludePath => '!' + excludePath))
 
-gulp.task('compileSites', function () {
+gulp.task('compileSites', gulp.series(function () {
   return gulp.src(sitesFiles)
     .pipe(sourcemaps.init())
     .pipe(tsProject()).js
@@ -30,27 +30,27 @@ gulp.task('compileSites', function () {
     .pipe(uglify())
     .pipe(sourcemaps.write())
     .pipe(gulp.dest('dist/'))
-})
+}))
 
-gulp.task('compileSitesWithoutUglify', function () {
+gulp.task('compileSitesWithoutUglify', gulp.series(function () {
   return gulp.src(sitesFiles)
   .pipe(sourcemaps.init())
   .pipe(tsProject()).js
   .pipe(sourcemaps.write())
   .on('error', swallowError)
   .pipe(gulp.dest('dist/'))
-})
+}))
 
-gulp.task('copySitesDeps', function () {
+gulp.task('copySitesDeps', gulp.series(function () {
   return gulp.src(sitesDepsFiles)
     .pipe(gulpCopy('dist/', {prefix: 1}))
-})
+}))
 
-gulp.task('watchSites', function () {
-  return gulp.watch(sitesFiles, ['compileSitesWithoutUglify'])
-})
+gulp.task('watchSites', gulp.series(function () {
+  return gulp.watch(sitesFiles, gulp.series(['compileSitesWithoutUglify']))
+}))
 
-gulp.task('watchSitesDeps', function () {
+gulp.task('watchSitesDeps', gulp.series(function () {
   return watch(sitesDepsFiles, vynil => {
     log('Site deps changes: ' + vynil.history[0])
     // src/[path to file]/file.ext
@@ -71,21 +71,21 @@ gulp.task('watchSitesDeps', function () {
         break
     }
   })
-})
+}))
 
-gulp.task('sass', function () {
+gulp.task('sass', gulp.series(function () {
   return gulp.src('./src/app/views/assets/sass/**/*.scss')
     .pipe(sass().on('error', sass.logError))
     .pipe(gulp.dest('./src/app/views/assets/css/'));
-})
+}))
 
-gulp.task('watchSass', function () {
+gulp.task('watchSass', gulp.series(function () {
   // In order to be triggered when there's a new file added/removed, we
   // have to pass in relative path as first argument and the root directory as 'cwd'
-  return gulp.watch('src/app/views/assets/sass/**/*.scss', { cwd: './' }, ['sass'])
-})
+  return gulp.watch('src/app/views/assets/sass/**/*.scss', { cwd: './' }, gulp.series(['sass']))
+}))
 
-gulp.task('watch', ['compileSites', 'copySitesDeps', 'watchSites', 'watchSitesDeps', 'watchSass'])
+gulp.task('watch', gulp.parallel(['compileSites', 'copySitesDeps', 'watchSites', 'watchSitesDeps', 'watchSass']))
 
 function swallowError (error) {
   // If you want details of the error in the console

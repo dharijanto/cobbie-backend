@@ -1,13 +1,11 @@
 import BaseController from './controllers/base-controller'
-import ProductService from '../services/product-service'
+import DemographicsService from '../services/demographics-service'
 import SequelizeService from '../services/sequelize-service'
 import { SiteData } from '../site-definitions'
 
 const path = require('path')
 
 let log = require('npmlog')
-
-let CredentialController = require(path.join(__dirname, 'controllers/credential-controller'))
 
 const TAG = 'MainController'
 
@@ -24,11 +22,7 @@ class Controller extends BaseController {
     })
 
     this.routeGet('/', (req, res, next) => {
-      ProductService.getCategories().then(resp => {
-        log.verbose(TAG, 'resp=' + JSON.stringify(resp))
-        res.locals.data = resp.data
-        res.render('index')
-      })
+      res.render('index')
     })
 
     /* this.routeUse((new CredentialController(initData)).getRouter()) */

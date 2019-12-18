@@ -18,8 +18,9 @@
     "@types/express-session": "^1.15.10",
     "@types/multer": "^1.3.7",
     "@types/passport": "^0.4.5",
+    "@types/sequelize": "^4.28.8",
     "fancy-log": "^1.3.3",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-copy": "^4.0.1",
     "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5",
@@ -31,6 +32,7 @@
     "typescript": "^3.0.0-dev.20180619"
   },
   "dependencies": {
+    "bluebird": "^3.7.2",
     "fancylog": "^4.0.2"
   }
 }
