@@ -1,29 +1,17 @@
-/* This is a shortened version of states, used for development purposes */
+import fullStates, { state } from './states'
 
-const state = {
-  company: {
-    name: 'P&G'
+/* This is a shortened version of states, used for development purposes */
+const states = fullStates
+
+for (let i = 0; i < states.length; i++) {
+  const state = states[i]
+  if (state.id === 'MAIN_demographics') {
+    state.logics = state.logics.slice(0, 4)
+  } else if (state.id === 'MAIN_survey') {
+    state.logics = state.logics.slice(0, 4)
   }
 }
-
-const surveyResponsesTemplates = {
-  template1: [
-    { type: 'button', text: '5 - Strongly Agree', action: 'fillSurvey(surveySessionId, surveyTopicId, 5)' },
-    { type: 'button', text: '4 - Agree', action: 'fillSurvey(surveySessionId, surveyTopicId, 4)' },
-    { type: 'text', text: '3 - Neutral', action: 'fillSurvey(surveySessionId, surveyTopicId, 3)' },
-    { type: 'text', text: '2 - Disagree', action: 'fillSurvey(surveySessionId, surveyTopicId, 2)' },
-    { type: 'text', text: '1 - Strongly Disagree', action: 'fillSurvey(surveySessionId, surveyTopicId, 1)' }
-  ],
-  // Reverse scoring
-  template2: [
-    { type: 'button', text: '5 - Strongly Agree', action: 'fillSurvey(surveySessionId, surveyTopicId, 1)' },
-    { type: 'button', text: '4 - Agree', action: 'fillSurvey(surveySessionId, surveyTopicId, 2)' },
-    { type: 'text', text: '3 - Neutral', action: 'fillSurvey(surveySessionId, surveyTopicId, 3)' },
-    { type: 'text', text: '2 - Disagree', action: 'fillSurvey(surveySessionId, surveyTopicId, 4)' },
-    { type: 'text', text: '1 - Strongly Disagree', action: 'fillSurvey(surveySessionId, surveyTopicId, 5)' }
-  ]
-}
-
+/*
 const states: Array<State> = [
   {
     id: 'MAIN',
@@ -207,6 +195,8 @@ const states: Array<State> = [
     ]
   }
 ]
+
+*/
 
 export default states
 export {

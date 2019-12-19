@@ -30,17 +30,23 @@ interface StateResponseButton {
 
 }
 
+// If there are 2 states defined through logic.response.nextState and logic.nextState, we use one
+// defined by logic.response
 interface StateLogic {
   // Code that eval-ed to boolean
   condition?: string
   // Id of the following state
   nextState: string
   messages: string[]
-  responses: Array<{
-    type: 'button',
-    text: string,
-    nextState: string
-  }>
+  responses: Array<StateLogicResponse>
+  clearState?: boolean
+}
+
+interface StateLogicResponse {
+  type: 'button',
+  text?: string,
+  clearState?: boolean
+  nextState: string
 }
 
 // Represent a state in FSM

@@ -1,5 +1,3 @@
-
-
 const state = {
   company: {
     name: 'P&G'
@@ -21,12 +19,12 @@ const surveyResponsesTemplates = {
     { type: 'text', text: '3 - Neutral', action: 'fillSurvey(surveySessionId, surveyTopicId, 3)' },
     { type: 'text', text: '2 - Disagree', action: 'fillSurvey(surveySessionId, surveyTopicId, 4)' },
     { type: 'text', text: '1 - Strongly Disagree', action: 'fillSurvey(surveySessionId, surveyTopicId, 5)' }
-  ],
+  ]
 }
 
 const states = [
   {
-    id: "MAIN",
+    id: 'MAIN',
     logics: [
       {
         condition: 'state.didIntroduction !== true',
@@ -42,8 +40,8 @@ const states = [
           'How can I help you? :)'
         ],
         responses: [
-          { type: 'button', text: 'Who are you again?', action: 'MAIN_introduction' },
-          { type: 'button', text: 'Update my demographics information', action: 'MAIN_demographic' }
+          { type: 'button', text: 'Who are you again?', nextState: 'MAIN_introduction' },
+          { type: 'button', text: 'Update my demographics information', nextState: 'MAIN_demographic' }
 
         ],
         nextState: null
@@ -60,7 +58,7 @@ const states = [
           'My name is Cobbie, your personal assistant :)'
         ],
         responses: [
-          { type: 'button', text: 'Nice to meet you too, Cobbie!'}
+          { type: 'button', text: 'Nice to meet you too, Cobbie!' }
         ],
         nextState: null
       },
@@ -69,7 +67,7 @@ const states = [
         messages: [
           'I\'m here to help you make ${state.company.name} the best place to work at!',
           `ll be asking you questions regarding to your experience <br>working at P&G. But don't fret, all the information is anonymous.<br>I am fully committed to protect your privacy :)<br><br><a href="googledocslinkhere">Learn More</a>`,
-          'I will then use the collective feedbacks from employees at ${state.company.name} to provide feedback to the HRD, which in turn could make company-wide initiatives to make everyone healthier, happier, and more productive',
+          'I will then use the collective feedbacks from employees at ${state.company.name} to provide feedback to the HRD, which in turn could make company-wide initiatives to make everyone healthier, happier, and more productive'
         ],
         responses: []
       },
@@ -94,7 +92,7 @@ const states = [
         ],
         responses: [
           { type: 'button', text: 'How can we help improving P&G?', nextState: 'MAIN_introduction_faq_how-cobbie-improve-corporation' },
-          { type: 'button', text: 'Nope, no more question!', action: '' }
+          { type: 'button', text: 'Nope, no more question!' }
         ]
       }
     ]
@@ -123,11 +121,11 @@ const states = [
         condition: null,
         messages: [
           'Before we can start improving ${state.company.name}, could you please provide some demographics information? This will only take 5 minutes.',
-          'And if you prefer not to answer a question, you can always skip it',
+          'And if you prefer not to answer a question, you can always skip it'
         ],
         responses: [
           { type: 'button', text: 'Sure!' },
-          { type: 'button', text: `I'll do it later`, nextState: 'MAIN', clearState: true }
+          { type: 'button', text: `I'll do it later`, nextState: 'MAIN_goodbye', clearState: true }
         ]
       },
       {
@@ -221,8 +219,8 @@ const states = [
           { type: 'text', text: '15+', action: `setDemographics('yearsWithCompany', '15+')` },
           { type: 'button', text: 'I prefer not to say', action: `setDemographics('yearsWithCompany', 'NA')` }
         ]
-      },
-    ],
+      }
+    ]
   },
   {
     id: 'MAIN_survey',
@@ -231,7 +229,7 @@ const states = [
         messages: [
           'To get started improving ${state.company.name}, I need you to provide honest feedback abour your working experience',
           `It's just as how very often people say that sharing is caring :)`,
-          `This survey is going to take 10 minutes to complete and needs to be taken without distractions.`,
+          `This survey is going to take 10 minutes to complete and needs to be taken without distractions.`
         ],
         responses: [
           { type: 'button', text: 'Sure thing, I have an undistracted 10 minutes!' },
@@ -505,7 +503,27 @@ const states = [
         responses: surveyResponsesTemplates.template2
       }
     ]
+  },
+  {
+    id: 'MAIN_goodbye',
+    logics: [
+      {
+        condition: null,
+        messages: [
+          'Okay then! :)',
+          'See you later!'
+        ],
+        responses: [
+          { type: 'button', text: 'Bye!' }
+        ],
+        nextState: null
+      }
+    ]
   }
 ]
 
 export default states
+export {
+  state,
+  surveyResponsesTemplates
+}
