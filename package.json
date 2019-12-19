@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "bluebird": "^3.7.2",
-    "fancylog": "^4.0.2"
+    "fancylog": "^4.0.2",
+    "readline-sync": "^1.4.10"
   }
 }

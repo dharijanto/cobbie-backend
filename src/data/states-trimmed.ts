@@ -122,8 +122,8 @@ const states: Array<State> = [
       {
         condition: null,
         messages: [
-          'Before we can start improving ${state.company.name}, could you please provide some demographics information? This will only take 5 minutes.',
-          'And if you prefer not to answer a question, you can always skip it'
+          `Before we can start improving ${state.company.name}, could you please provide some demographics information? This will only take 5 minutes.`,
+          `And if you prefer not to answer a question, you can always skip it`
         ],
         responses: [
           { type: 'button', text: 'Sure!' },
@@ -209,3 +209,6 @@ const states: Array<State> = [
 ]
 
 export default states
+export {
+  state
+}
