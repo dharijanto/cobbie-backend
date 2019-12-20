@@ -6,7 +6,14 @@ import * as readlinesync from 'readline-sync'
 import FSMStates, * as AllFSMStates from '../data/states-trimmed'
 import { executeAction } from '../libs/fsm-functions'
 
+const DEBUG = false
 const state = AllFSMStates.state
+
+function debugMessage (message) {
+  if (DEBUG) {
+    console.log(`[DEBUG] ${message}`)
+  }
+}
 
 function parseStates (states: Array<State>): { [key: string]: State } {
   const hash = {}
@@ -30,6 +37,7 @@ function checkStateLogicCondition (logic) {
     // Condition is defined and is passed
   } else {
     // tslint:disable-next-line:no-eval
+    debugMessage(`executeAction(): logic=${logic}`)
     const conditionPassed = executeAction(logic.condition)
     if (conditionPassed) {
       return true
@@ -42,7 +50,7 @@ function checkStateLogicCondition (logic) {
 // Print out each of the messages one by one, but delay first according to the message
 // length
 function parseMessages (messages: string[]) {
-  console.log(`parseMessages(): messages${JSON.stringify(messages)}`)
+  debugMessage(`parseMessages(): messages${JSON.stringify(messages)}`)
   messages.forEach(message => {
     console.log(message)
   })
@@ -51,7 +59,7 @@ function parseMessages (messages: string[]) {
 // Display all responses to the user, take up
 // an answer, then return the state to redirect to
 function parseResponses (responses: any[]): StateLogicResponse {
-  console.log('parseResponses(): responses=' + JSON.stringify(responses))
+  debugMessage('parseResponses(): responses=' + JSON.stringify(responses))
   let responseMap = {}
   // Print out each of the responses prompt
   responses.forEach((response, index) => {
@@ -90,17 +98,17 @@ function parseResponses (responses: any[]): StateLogicResponse {
 
 const pendingLogics: StateLogic[] = []
 function parseState (state) {
-  console.log(`parseState(): state=${JSON.stringify(state)}`)
+  debugMessage(`parseState(): state=${JSON.stringify(state)}`)
 
   state.logics.reverse().forEach(logic => {
     pendingLogics.unshift(logic)
   })
-  console.log(`parseState(): pendingLogics=${JSON.stringify(pendingLogics)}`)
+  debugMessage(`parseState(): pendingLogics=${JSON.stringify(pendingLogics)}`)
 
   while (pendingLogics.length > 0) {
     const currentLogic = pendingLogics.shift()
     if (currentLogic) {
-      console.log(`parseState(): currentLogic=${JSON.stringify(currentLogic)}`)
+      debugMessage(`parseState(): currentLogic=${JSON.stringify(currentLogic)}`)
       const conditionFulfilled = checkStateLogicCondition(currentLogic)
       let nextState: State | null = null
       if (conditionFulfilled) {
@@ -112,7 +120,7 @@ function parseState (state) {
           const response = parseResponses(currentLogic.responses)
           if (response.clearState) {
             while (pendingLogics.length > 0) {
-              console.log('parseState(): clearState is true, clearning pendingLogics...')
+              debugMessage('parseState(): clearState is true, clearning pendingLogics...')
               pendingLogics.pop()
             }
           }
@@ -129,14 +137,14 @@ function parseState (state) {
         if (!nextState) {
           nextState = stateMap[currentLogic.nextState]
         }
+
         if (nextState) {
-          console.log(`parseState(): nextState=${JSON.stringify(nextState)}`)
+          debugMessage(`parseState(): nextState=${JSON.stringify(nextState)}`)
           nextState.logics.reverse().forEach(logic => {
             pendingLogics.unshift(logic)
           })
         }
-
-        console.log(`parseState(): pendingLogics=${JSON.stringify(pendingLogics)}`)
+        debugMessage(`parseState(): pendingLogics=${JSON.stringify(pendingLogics)}`)
       }
     } else {
       throw new Error('Unexpected empty logic!')
@@ -153,6 +161,5 @@ while (true) {
   } else {
     nextState = stateMap['MAIN']
   }
-  throw new Error('pause!')
-
+  // throw new Error('pause!')
 }

@@ -42,7 +42,6 @@ const states = [
         responses: [
           { type: 'button', text: 'Who are you again?', nextState: 'MAIN_introduction' },
           { type: 'button', text: 'Update my demographics information', nextState: 'MAIN_demographic' }
-
         ],
         nextState: null
       }

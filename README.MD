@@ -558,4 +558,31 @@ clearStack: true: // By default, when there's no more logics in a state, it will
 ### Parsing
 For UI presentation, we can do several things to make visual improvements:
 1. Create an effect as if the bot is typing. The length of typing is correlated to the length of the sentence
-2. 
+2.
+
+# API Design
+## Endpoints
+### [GET] /api/v1/chatbot/current-state
+* Response:
+```
+{
+  messages: [
+    'Hi there, nice to meet you!',
+    'My name is Cobbie, your personal assistant :)'
+  ],
+  responses: [
+    { type: 'button', text: 'Nice to meet you too, Cobbie!'}
+  ]
+}
+```
+
+### [POST] /api/v1/chatbot/current-state
+* Body
+```
+{
+  index: 0,
+  data: {
+    text: 'This is filled only if the response is of type free-text'
+  }
+}
+```
