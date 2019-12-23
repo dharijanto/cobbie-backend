@@ -12,12 +12,7 @@ function fillSurvey (surveySessionid, surveyTopicId, value) {
 
 }
 
-function setDemographics (userId, key, value) {
-  DemographicsService.setDemographics(userId, key, value)
-}
-
 export {
   executeAction,
-  fillSurvey,
-  setDemographics
+  fillSurvey
 }

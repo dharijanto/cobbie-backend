@@ -14,20 +14,22 @@ interface BaseModel {
 interface Company extends BaseModel {
   name: string
   employeesCount: number
+  userId: number
 }
 
 interface User extends BaseModel {
-
+  didIntroduction: boolean
 }
 
 interface Demographics extends BaseModel {
-  key: string
   value: string
   userId: number
 }
 
-interface StateResponseButton {
-
+interface UserEnvironment {
+  company: {
+    name: string
+  }
 }
 
 // If there are 2 states defined through logic.response.nextState and logic.nextState, we use one
@@ -49,8 +51,14 @@ interface StateLogicResponse {
   nextState: string
 }
 
-// Represent a state in FSM
 interface State {
   id: string
   logics: any
+}
+
+// Represent a state in FSM
+interface RunningStates {
+  id?: string
+  pendingLogics: StateLogic[]
+  currentLogic: StateLogic
 }

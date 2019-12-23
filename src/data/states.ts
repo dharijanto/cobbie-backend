@@ -123,7 +123,7 @@ const states = [
           'And if you prefer not to answer a question, you can always skip it'
         ],
         responses: [
-          { type: 'button', text: 'Sure!' },
+          { type: 'button', text: 'Sure!', action: 'createDemographics()' },
           { type: 'button', text: `I'll do it later`, nextState: 'MAIN_goodbye', clearState: true }
         ]
       },
@@ -175,7 +175,7 @@ const states = [
           { type: 'checkbox', text: 'Native American', value: 'native-american', id: 'ethnicities' },
           { type: 'checkbox', text: 'White', value: 'white', id: 'ethnicities' }
         ],
-        action: `setDemographics('ethnicity', ethnicities)`
+        action: `setDemographics('ethnicities', ethnicities)`
       },
       {
         condition: null,
