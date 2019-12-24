@@ -34,6 +34,7 @@
   "dependencies": {
     "bluebird": "^3.7.2",
     "fancylog": "^4.0.2",
+    "lodash": "^4.17.15",
     "readline-sync": "^1.4.10"
   }
 }

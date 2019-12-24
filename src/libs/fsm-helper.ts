@@ -1,5 +1,6 @@
 import FSMStates, * as AllFSMStates from '../data/states-trimmed'
 import * as vm from 'vm'
+import * as _ from 'lodash'
 const DEBUG = false
 
 export default class {
@@ -47,7 +48,7 @@ export default class {
 
   static getStateByName (name) {
     const stateMap = this.parseStates(FSMStates)
-    const mainState = stateMap[name]
+    const mainState = _.cloneDeep(stateMap[name])
     if (mainState) {
       return mainState
     } else {

@@ -106,7 +106,7 @@ class FSMService extends CRUDService {
 
   // TODO: Should we save?
   private generateNewRunningStates (userEnvironment) {
-    const mainState = { ...FSMHelper.getMainState() } // this.parseStates(FSMStates)
+    const mainState = FSMHelper.getMainState() // this.parseStates(FSMStates)
     log.verbose(TAG, `generateNewRunningStates(): mainState=${JSON.stringify(mainState)}`)
     let pendingLogics
     if (!mainState) {
@@ -115,12 +115,15 @@ class FSMService extends CRUDService {
       pendingLogics = [].concat(mainState.logics)
     }
     let currentLogic: StateLogic
+    log.verbose(TAG, `generateNewRunningStates(): pendingLogics=${JSON.stringify(pendingLogics)}`)
     while (pendingLogics !== null) {
       // Parse each of the states until we encounter logic that we can execute
       currentLogic = pendingLogics.shift()
       if (currentLogic) {
+        log.verbose(TAG, `generateNewRunningStates(): currentLogic=${JSON.stringify(currentLogic)}`)
         // this.debugMessage(`parseState(): currentLogic=${JSON.stringify(currentLogic)}`)
         const conditionFulfilled = FSMHelper.checkStateLogicCondition(currentLogic, userEnvironment)
+        log.verbose(TAG, `generateNewRunningStates(): conditionFulfilled=${conditionFulfilled}`)
         if (conditionFulfilled) {
           // Some actions are needed from frontend
           if ((currentLogic.messages && currentLogic.messages.length > 0) ||
@@ -131,6 +134,7 @@ class FSMService extends CRUDService {
             let nextState: State | null = null
             if (currentLogic.nextState) {
               nextState = FSMHelper.getStateByName(currentLogic.nextState) // stateMap[response.nextState]
+              log.verbose(TAG, `generateNewRunningStates(): nextState=${JSON.stringify(nextState)}`)
               nextState.logics.reverse().forEach(logic => {
                 pendingLogics.unshift(logic)
               })
