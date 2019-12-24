@@ -47,7 +47,8 @@ class FSMService extends CRUDService {
   // Retrieved executing states stored in the database
   private getSavedRunningStates (userId): Promise<NCResponse<RunningStates>> {
     if (userId) {
-      return super.readOne<any>('RunningStates', { userId }).then(resp => {
+      return super.readOne<any>('SerializedRunningStates', { userId }).then(resp => {
+        log.verbose(TAG, `getSavedRunningStates(): userId=${userId} resp=${JSON.stringify(resp)}`)
         if (resp.status && resp.data) {
           const currentLogic = JSON.parse(resp.data.currentLogic)
           const pendingLogics = JSON.parse(resp.data.pendingLogics)
@@ -117,8 +118,21 @@ class FSMService extends CRUDService {
     })
   }
 
+  // We don't wanna delete state history because they can be used to do bug-fixing
   private saveRunningStates (userId: number, runningStates: RunningStates): Promise<NCResponse<RunningStates>> {
-    return super.readOne<SerializedRunningStates>('RunningStates', { userId }).then(resp => {
+    return super.create<SerializedRunningStates>('RunningStates', {
+      timestamp: runningStates.timestamp,
+      pendingLogics: JSON.stringify(runningStates.pendingLogics),
+      currentLogic: JSON.stringify(runningStates.currentLogic),
+      userId
+    }).then(resp => {
+      if (resp.status) {
+        return { status: true, data: runningStates }
+      } else {
+        return { status: false, errMessage: resp.errMessage }
+      }
+    })
+    /* return super.readOne<SerializedRunningStates>('RunningStates', { userId }).then(resp => {
       if (resp.status && resp.data) {
         return super.delete<SerializedRunningStates>('RunningStates', { userId })
       } else {
@@ -128,7 +142,8 @@ class FSMService extends CRUDService {
       return super.create<SerializedRunningStates>('RunningStates', {
         timestamp: runningStates.timestamp,
         pendingLogics: JSON.stringify(runningStates.pendingLogics),
-        currentLogic: JSON.stringify(runningStates.currentLogic)
+        currentLogic: JSON.stringify(runningStates.currentLogic),
+        userId
       }).then(resp => {
         if (resp.status) {
           return { status: true, data: runningStates }
@@ -136,7 +151,7 @@ class FSMService extends CRUDService {
           return { status: false, errMessage: resp.errMessage }
         }
       })
-    })
+    }) */
   }
 
   // TODO: Should we save?

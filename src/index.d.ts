@@ -70,3 +70,8 @@ interface SerializedRunningStates extends BaseModel {
   pendingLogics: string
   currentLogic: string
 }
+
+interface FrontendResponses extends BaseModel {
+  timestamp: number
+  value: string
+}

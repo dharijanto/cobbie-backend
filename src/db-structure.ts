@@ -20,13 +20,20 @@ export default function addTables (sequelize: Sequelize.Sequelize, models: Seque
   })
   models.Demographics.belongsTo(models.User)
 
-  models.RunningStates = sequelize.define('runningStates', {
+  // TODO: Rename this to SerializedRunningState to avoid confusion
+  models.SerializedRunningStates = sequelize.define('serializedRunningStates', {
     id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
     timestamp: { type: Sequelize.BIGINT },
     pendingLogics: { type: Sequelize.TEXT },
     currentLogic: { type: Sequelize.TEXT }
   })
-  models.RunningStates.belongsTo(models.User)
+  models.SerializedRunningStates.belongsTo(models.User)
+
+  models.SerializedFrontendResponses = sequelize.define('serializedFrontendResponses', {
+    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    timestamp: { type: Sequelize.BIGINT },
+    value: { type: Sequelize.TEXT }
+  })
 
   return models
 }
