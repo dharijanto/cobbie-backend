@@ -43,6 +43,7 @@ class Controller extends BaseController {
     this.routePost('/api/v1/chatbot/current-state', (req, res, next) => {
       // HACK until we implement JWT
       const userId = req.query.userId
+      // FSMService.
 
     })
 

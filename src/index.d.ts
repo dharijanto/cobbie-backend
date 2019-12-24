@@ -58,7 +58,15 @@ interface State {
 
 // Represent a state in FSM
 interface RunningStates {
-  id?: string
+  // id?: string
+  timestamp: number
   pendingLogics: StateLogic[]
   currentLogic: StateLogic
+}
+
+interface SerializedRunningStates extends BaseModel {
+  userId: number
+  timestamp: number
+  pendingLogics: string
+  currentLogic: string
 }

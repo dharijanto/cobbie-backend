@@ -2,12 +2,14 @@ import CRUDService from './crud-service'
 import * as Promise from 'bluebird'
 
 import FSMHelper from '../libs/fsm-helper'
+import Utils from '../libs/utils'
 
 import * as log from 'npmlog'
 
 interface FrontendAction {
+  timestamp: number
   messages: Array<String>
-  responses: Array<{ type: 'button', text: string }>
+  responses: Array<{ type: string, text: string }>
 }
 
 const TAG = 'FSMService'
@@ -18,14 +20,20 @@ class FSMService extends CRUDService {
         if (resp.status && resp.data) {
           const userEnv = resp.data
           return this.getSavedRunningStates(userId).then(resp2 => {
-            let runningStates: RunningStates
             if (resp2.status && resp2.data) {
-              runningStates = resp2.data
+              return { status: true, data: resp2.data }
             } else {
               // There's no saved running states
-              runningStates = this.generateNewRunningStates(userEnv)
+              const runningStates: RunningStates = this.generateNewRunningStates(userEnv)
+              // Retain it to the database
+              return this.saveRunningStates(userId, runningStates)
             }
-            return this.getFrontendAction(runningStates)
+          }).then((resp: NCResponse<RunningStates>) => {
+            if (resp.status && resp.data) {
+              return this.getFrontendAction(resp.data)
+            } else {
+              return { status: false, errMessage: resp.errMessage }
+            }
           })
         } else {
           return Promise.resolve({ status: false, errMessage: 'Failed to retrieve userEnvironment: ' + resp.errMessage })
@@ -45,8 +53,12 @@ class FSMService extends CRUDService {
           const pendingLogics = JSON.parse(resp.data.pendingLogics)
           return { status: true, data: {
             id: resp.data.id,
+            timestamp: resp.data.timestamp,
             pendingLogics,
-            currentLogic
+            currentLogic,
+            createdAt: resp.data.createdAt,
+            updatedAt: resp.data.updatedAt,
+            userId: resp.data.userId
           }}
         } else {
           return { status: false, errMessage: resp.errMessage }
@@ -58,12 +70,13 @@ class FSMService extends CRUDService {
   }
 
   // Get frontend action based on running states
-  private getFrontendAction (runningStates): NCResponse<FrontendAction> {
+  private getFrontendAction (runningStates: RunningStates): NCResponse<FrontendAction> {
     log.verbose(TAG, `getFrontendAction(): runningStates=${JSON.stringify(runningStates)}`)
     if (runningStates) {
       return {
         status: true,
         data: {
+          timestamp: runningStates.timestamp,
           messages: runningStates.currentLogic.messages,
           responses: runningStates.currentLogic.responses.map(response => {
             return { type: 'button', text: '' + response.text }
@@ -104,8 +117,30 @@ class FSMService extends CRUDService {
     })
   }
 
+  private saveRunningStates (userId: number, runningStates: RunningStates): Promise<NCResponse<RunningStates>> {
+    return super.readOne<SerializedRunningStates>('RunningStates', { userId }).then(resp => {
+      if (resp.status && resp.data) {
+        return super.delete<SerializedRunningStates>('RunningStates', { userId })
+      } else {
+        return Promise.resolve({ status: true })
+      }
+    }).then(() => {
+      return super.create<SerializedRunningStates>('RunningStates', {
+        timestamp: runningStates.timestamp,
+        pendingLogics: JSON.stringify(runningStates.pendingLogics),
+        currentLogic: JSON.stringify(runningStates.currentLogic)
+      }).then(resp => {
+        if (resp.status) {
+          return { status: true, data: runningStates }
+        } else {
+          return { status: false, errMessage: resp.errMessage }
+        }
+      })
+    })
+  }
+
   // TODO: Should we save?
-  private generateNewRunningStates (userEnvironment) {
+  private generateNewRunningStates (userEnvironment): RunningStates {
     const mainState = FSMHelper.getMainState() // this.parseStates(FSMStates)
     log.verbose(TAG, `generateNewRunningStates(): mainState=${JSON.stringify(mainState)}`)
     let pendingLogics
@@ -128,7 +163,7 @@ class FSMService extends CRUDService {
           // Some actions are needed from frontend
           if ((currentLogic.messages && currentLogic.messages.length > 0) ||
               (currentLogic.responses && currentLogic.responses.length > 0)) {
-            return { currentLogic, pendingLogics }
+            return { timestamp: Utils.getCurrentTimestamp(),currentLogic, pendingLogics }
           } else {
             // Parse until we encounter something that requires user's action
             let nextState: State | null = null

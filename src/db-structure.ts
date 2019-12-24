@@ -22,6 +22,7 @@ export default function addTables (sequelize: Sequelize.Sequelize, models: Seque
 
   models.RunningStates = sequelize.define('runningStates', {
     id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    timestamp: { type: Sequelize.BIGINT },
     pendingLogics: { type: Sequelize.TEXT },
     currentLogic: { type: Sequelize.TEXT }
   })
