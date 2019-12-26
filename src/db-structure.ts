@@ -29,7 +29,7 @@ export default function addTables (sequelize: Sequelize.Sequelize, models: Seque
   })
   models.SerializedRunningStates.belongsTo(models.User)
 
-  models.SerializedFrontendResponses = sequelize.define('serializedFrontendResponses', {
+  models.SerializedFrontendResponse = sequelize.define('serializedFrontendResponse', {
     id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
     timestamp: { type: Sequelize.BIGINT },
     value: { type: Sequelize.TEXT }

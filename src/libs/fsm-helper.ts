@@ -52,7 +52,7 @@ export default class {
     if (mainState) {
       return mainState
     } else {
-      throw new Error('Failed to retrieve main state!')
+      throw new Error('Failed to retrieve state: ' + name)
     }
   }
 

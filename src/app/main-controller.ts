@@ -43,8 +43,10 @@ class Controller extends BaseController {
     this.routePost('/api/v1/chatbot/current-state', (req, res, next) => {
       // HACK until we implement JWT
       const userId = req.query.userId
-      // FSMService.
-
+      const response = req.body
+      FSMService.submitFrontendResponse(userId, response).then(resp => {
+        res.json(resp)
+      }).catch(next)
     })
 
     /* this.routeUse((new CredentialController(initData)).getRouter()) */

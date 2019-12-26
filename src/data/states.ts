@@ -513,7 +513,7 @@ const states = [
           'See you later!'
         ],
         responses: [
-          { type: 'button', text: 'Bye!' }
+          { type: 'button', text: 'Bye!', nextState: 'MAIN', clearState: true }
         ],
         nextState: null
       }

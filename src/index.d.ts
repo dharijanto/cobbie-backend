@@ -45,8 +45,9 @@ interface StateLogic {
 }
 
 interface StateLogicResponse {
-  type: 'button',
-  text?: string,
+  type: 'button' | 'text'
+  text?: string
+  action?: string
   clearState?: boolean
   nextState: string
 }
@@ -71,7 +72,8 @@ interface SerializedRunningStates extends BaseModel {
   currentLogic: string
 }
 
-interface FrontendResponses extends BaseModel {
+interface FrontendResponse extends BaseModel {
   timestamp: number
-  value: string
+  responseIndex: number
+  text?: string
 }
