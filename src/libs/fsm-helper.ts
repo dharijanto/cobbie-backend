@@ -1,22 +1,43 @@
-import FSMStates, * as AllFSMStates from '../data/states-trimmed'
 import * as vm from 'vm'
-import * as _ from 'lodash'
-const DEBUG = false
 
+import * as _ from 'lodash'
+import * as Promise from 'bluebird'
+import * as fillTemplate from 'es6-dynamic-template'
+import * as log from 'npmlog'
+
+import FSMStates, * as AllFSMStates from '../data/states-trimmed'
+const DEBUG = true
+const TAG = 'FSMHelper'
+
+// Helper functions related to FSM parsing
 export default class {
   private static debugMessage (message) {
     if (DEBUG) {
-      console.log(`[DEBUG] ${message}`)
+      log.verbose(TAG, `[DEBUG] ${message}`)
     }
   }
 
-  static executeAction (action, env) {
-    // tslint:disable-next-line:no-eval
-    return vm.runInNewContext(action, env)
-    // return eval(action)
+  private static isPromise (obj) {
+    return typeof obj === 'object' && 'then' in obj
   }
 
-  static checkStateLogicCondition (logic, userEnvironment) {
+  static executeAction (action, env): Promise<any> {
+    this.debugMessage(`executeAction(): action=${action} env=${JSON.stringify(env)}`)
+    // tslint:disable-next-line:no-eval
+    const result = vm.runInNewContext(action, env)
+    // return eval(action)
+    if (this.isPromise(result)) {
+      return result
+    } else {
+      return Promise.resolve(result)
+    }
+  }
+
+  static executeActionSync (action, env): any {
+    return vm.runInNewContext(action, env)
+  }
+
+  static checkStateLogicCondition (logic, userEnvironment): boolean {
     // Condition is not defined
     if (!logic.condition) {
       return true
@@ -24,12 +45,7 @@ export default class {
     } else {
       // tslint:disable-next-line:no-eval
       this.debugMessage(`executeAction(): logic=${logic}`)
-      const conditionPassed = this.executeAction(logic.condition, userEnvironment)
-      if (conditionPassed) {
-        return true
-      } else {
-        return false
-      }
+      return this.executeActionSync(logic.condition, userEnvironment)
     }
   }
 
@@ -56,27 +72,12 @@ export default class {
     }
   }
 
-  /* getInitialRunningState (userId): RunningStates {
-    const stateMap = this.parseStates(FSMStates)
-    const mainState = stateMap['MAIN']
-    let pendingLogics
-    if (!mainState) {
-      throw new Error('MAIN state is required!')
-    } else {
-      pendingLogics = mainState.logics
-    }
-    let currentLogic: StateLogic
-    while (pendingLogics !== null) {
-      // Parse each of the states until we encounter logic that we can execute
-      currentLogic = pendingLogics.shift()
-      if (currentLogic) {
-        this.debugMessage(`parseState(): currentLogic=${JSON.stringify(currentLogic)}`)
-        const conditionFulfilled = this.checkStateLogicCondition(currentLogic)
-        if (conditionFulfilled) {
-          return { currentLogic, pendingLogics }
-        }
-      }
-    }
-    throw new Error('Failed to generate initial running states! Double check your FSM states?')
-  } */
+  static parseTemplateString (text, env): String {
+    this.debugMessage(`parseTemplateString(): text=${text} env=${env}`)
+    return fillTemplate(text, env)
+  }
+
+  static parseTemplateStrings (texts: string[], env): String[] {
+    return texts.map(text => this.parseTemplateString(text, env))
+  }
 }

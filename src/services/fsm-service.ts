@@ -6,6 +6,9 @@ import Utils from '../libs/utils'
 import * as _ from 'lodash'
 
 import * as log from 'npmlog'
+import demographicsService from './demographics-service'
+import userService from './user-service'
+import surveyService from './survey-service'
 
 interface FrontendAction {
   timestamp: number
@@ -31,7 +34,7 @@ class FSMService extends CRUDService {
             }
           }).then((resp: NCResponse<RunningStates>) => {
             if (resp.status && resp.data) {
-              return this.getFrontendAction(resp.data)
+              return this.getFrontendAction(resp.data, userEnv)
             } else {
               return { status: false, errMessage: resp.errMessage }
             }
@@ -45,7 +48,7 @@ class FSMService extends CRUDService {
     }
   }
 
-  submitFrontendResponse (userId: number, response: FrontendResponse): Promise<NCResponse<RunningStates>> {
+  submitFrontendResponse (userId: number, response: FrontendResponse): Promise<NCResponse<FrontendAction>> {
     log.verbose(TAG, `submitFrontendResponse(): userId=${userId} response=${JSON.stringify(response)}`)
     /* if (!response || !('responseIndex' in response)) {
       return Promise.resolve({ status: false, errMessage: 'Invalid response!' })
@@ -56,13 +59,20 @@ class FSMService extends CRUDService {
           const userEnv = resp.data
           return this.getSavedRunningStates(userId).then(resp2 => {
             if (resp2.status && resp2.data) {
-              const resp3 = this.updateRunningStates(resp2.data, response, userEnv)
-              if (resp3.status && resp3.data) {
-                return this.saveRunningStates(userId, resp3.data)
-                // TODO: Also save response that was used to generate this RunningStates
-              } else {
-                return { status: false, errMessage: 'Failed to updateRunningStates(): ' + resp3.errMessage }
-              }
+              return this.updateRunningStates(resp2.data, response, userEnv).then(resp3 => {
+                if (resp3.status && resp3.data) {
+                  return this.saveRunningStates(userId, resp3.data).then(resp4 => {
+                    if (resp4.status && resp4.data) {
+                      return this.getFrontendAction(resp4.data, userEnv)
+                    } else {
+                      return { status: false, errMessage: `Failed to saveRunningStates: ${resp4.errMessage}` }
+                    }
+                  })
+                  // TODO: Also save response that was used to generate this RunningStates
+                } else {
+                  return { status: false, errMessage: 'Failed to updateRunningStates(): ' + resp3.errMessage }
+                }
+              })
             } else {
               return { status: false, errMessage: `There is RunningStates to be responded!` }
             }
@@ -106,16 +116,16 @@ class FSMService extends CRUDService {
   }
 
   // Get frontend action based on running states
-  private getFrontendAction (runningStates: RunningStates): NCResponse<FrontendAction> {
+  private getFrontendAction (runningStates: RunningStates, userEnv: UserEnvironment): NCResponse<FrontendAction> {
     log.verbose(TAG, `getFrontendAction(): runningStates=${JSON.stringify(runningStates)}`)
     if (runningStates) {
       return {
         status: true,
         data: {
           timestamp: runningStates.timestamp,
-          messages: runningStates.currentLogic.messages,
+          messages: FSMHelper.parseTemplateStrings(runningStates.currentLogic.messages, userEnv),
           responses: runningStates.currentLogic.responses.map(response => {
-            return { type: 'button', text: '' + response.text }
+            return { type: response.type, text: '' + response.text }
           })
         }
       }
@@ -129,8 +139,10 @@ class FSMService extends CRUDService {
     return Promise.join<NCResponse<any>>(
       super.readOne<Company>('Company', { userId }),
       super.readOne<User>('User', { id: userId }),
-      super.rawReadOneQuery(`SELECT * FROM demographics WHERE userId=${userId} ORDER BY createdAt DESC LIMIT 1`)
-    ).spread((resp1: NCResponse<Company>, resp2: NCResponse<User>, resp3: NCResponse<Demographics>) => {
+      super.rawReadOneQuery(`SELECT * FROM demographics WHERE userId=${userId} ORDER BY createdAt DESC LIMIT 1`),
+      super.rawReadOneQuery(`SELECT * FROM surveys WHERE userId=${userId} ORDER BY createdAt DESC LIMIT 1`)
+    ).spread((resp1: NCResponse<Company>, resp2: NCResponse<User>,
+              resp3: NCResponse<Demographics>, resp4: NCResponse<Survey>) => {
       if (resp2.status && resp2.data) {
         if (resp1.status && resp1.data) {
           return {
@@ -140,7 +152,24 @@ class FSMService extends CRUDService {
                 name: resp1.data.name
               },
               state: {
-                isIntroduced: resp2.data.didIntroduction
+                didIntroduction: resp2.data.didIntroduction,
+                didDemographics: resp3.status,
+                didSurvey: resp4.status
+              },
+              createDemographics: function () {
+                return demographicsService.createDemographics(userId)
+              },
+              setDemographics: function (key, value) {
+                return demographicsService.setDemographics(userId, key, value)
+              },
+              finishIntroduction: function () {
+                return userService.finishIntroduction(userId)
+              },
+              createSurvey: function () {
+                return surveyService.createSurvey(userId)
+              },
+              setSurvey: function (topicName, topicId, value) {
+                return surveyService.setSurvey(userId, topicName, topicId, value)
               }
             }
           }
@@ -171,6 +200,8 @@ class FSMService extends CRUDService {
 
   // Given pendingLogics, generate RunningStates
   private generateRunningStates (pendingLogicsOrig, userEnvironment): RunningStates {
+    log.verbose(TAG, `generateRunningStates(): pendingLogicsOrig=${JSON.stringify(pendingLogicsOrig)}` +
+      ` userEnvironment=${JSON.stringify(userEnvironment)}`)
     const pendingLogics = _.cloneDeep(pendingLogicsOrig)
     let currentLogic
     while (pendingLogics.length > 0) {
@@ -181,7 +212,7 @@ class FSMService extends CRUDService {
         log.verbose(TAG, `generateNewRunningStates(): currentLogic=${JSON.stringify(currentLogic)}`)
         // this.debugMessage(`parseState(): currentLogic=${JSON.stringify(currentLogic)}`)
         const conditionFulfilled = FSMHelper.checkStateLogicCondition(currentLogic, userEnvironment)
-        log.verbose(TAG, `generateNewRunningStates(): conditionFulfilled=${conditionFulfilled}`)
+        log.verbose(TAG, `generateNewRunningStates(): condition=${JSON.stringify(currentLogic.condition)} conditionFulfilled=${conditionFulfilled}`)
         if (conditionFulfilled) {
           // Some actions are needed from frontend
           if ((currentLogic.messages && currentLogic.messages.length > 0) ||
@@ -218,31 +249,36 @@ class FSMService extends CRUDService {
     return this.generateRunningStates(pendingLogics, userEnvironment)
   }
 
+  // TODO: Handle action that is not on response but on the state itself
   private updateRunningStates (lastState: RunningStates,
-      frontendResponse: FrontendResponse, userEnv: UserEnvironment): NCResponse<RunningStates> {
+      frontendResponse: FrontendResponse, userEnv: UserEnvironment): Promise<NCResponse<RunningStates>> {
     log.verbose(TAG, `updateRunningStates(): lastState=${JSON.stringify(lastState)} frontendResponse=${JSON.stringify(frontendResponse)}`)
     const selectedIndex = frontendResponse.responseIndex
     const pendingLogics = _.cloneDeep(lastState.pendingLogics)
+
     let nextState
+    let action: Promise<any> = Promise.resolve()
     if (selectedIndex === undefined && lastState.currentLogic.responses.length > 0) {
-      return { status: false, errMessage: `Response is required!` }
+      return Promise.resolve({ status: false, errMessage: `Response is required!` })
     } else if (selectedIndex !== undefined &&
         (lastState.currentLogic.responses === undefined || lastState.currentLogic.responses.length === 0)) {
-      return { status: false, errMessage: `Response is not expected!` }
+      return Promise.resolve({ status: false, errMessage: `Response is not expected!` })
     } else if (selectedIndex !== undefined && lastState.currentLogic.responses.length > 0) {
       if (selectedIndex >= lastState.currentLogic.responses.length || selectedIndex < 0) {
-        return { status: false, errMessage: `Response out of bound!` }
+        return Promise.resolve({ status: false, errMessage: `Response out of bound!` })
       } else {
         if (lastState.currentLogic.responses[selectedIndex].type === 'text') {
           if (!frontendResponse.text) {
-            return { status: false, errMessage: `Response is required!` }
+            return Promise.resolve({ status: false, errMessage: `Response is required!` })
           }
         }
         const response = lastState.currentLogic.responses[frontendResponse.responseIndex]
         // Execute action embedded on the selected response
         if (response.action) {
-          FSMHelper.executeAction(response.action, userEnv)
+          const stateVariables = lastState.currentLogic.variables || {}
+          action = FSMHelper.executeAction(response.action, { ...userEnv, ...stateVariables })
         }
+
         // If selected response request state to be cleared
         if (response.clearState) {
           while (pendingLogics.length > 0) {
@@ -269,8 +305,17 @@ class FSMService extends CRUDService {
       })
     }
 
-    // TODO: Update the state
-    return { status: true, data: this.generateRunningStates(pendingLogics, userEnv) }
+    return action.then(() => {
+      // TODO: Update the state
+      let runningStates
+      try {
+        runningStates = this.generateRunningStates(pendingLogics, userEnv)
+      } catch (e) {
+        log.info(TAG, `updateRunningStates(): No more states! Loop back to main state!`)
+        runningStates = this.generateNewRunningStates(userEnv)
+      }
+      return { status: true, data: runningStates }
+    })
   }
 }
 

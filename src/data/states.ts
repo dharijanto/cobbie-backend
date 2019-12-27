@@ -1,3 +1,7 @@
+// These variables are just placeholders, they are going to be replaced during runtime
+const company = {
+  name: 'P&G'
+}
 const state = {
   company: {
     name: 'P&G'
@@ -6,19 +10,19 @@ const state = {
 
 const surveyResponsesTemplates = {
   template1: [
-    { type: 'button', text: '5 - Strongly Agree', action: 'fillSurvey(surveySessionId, surveyTopicId, 5)' },
-    { type: 'button', text: '4 - Agree', action: 'fillSurvey(surveySessionId, surveyTopicId, 4)' },
-    { type: 'text', text: '3 - Neutral', action: 'fillSurvey(surveySessionId, surveyTopicId, 3)' },
-    { type: 'text', text: '2 - Disagree', action: 'fillSurvey(surveySessionId, surveyTopicId, 2)' },
-    { type: 'text', text: '1 - Strongly Disagree', action: 'fillSurvey(surveySessionId, surveyTopicId, 1)' }
+    { type: 'button', text: '5 - Strongly Agree', action: 'setSurvey(surveyTopicName, surveyTopicId, 5)' },
+    { type: 'button', text: '4 - Agree', action: 'setSurvey(surveyTopicName, surveyTopicId, 4)' },
+    { type: 'button', text: '3 - Neutral', action: 'setSurvey(surveyTopicName, surveyTopicId, 3)' },
+    { type: 'button', text: '2 - Disagree', action: 'setSurvey(surveyTopicName, surveyTopicId, 2)' },
+    { type: 'button', text: '1 - Strongly Disagree', action: 'setSurvey(surveyTopicName, surveyTopicId, 1)' }
   ],
   // Reverse scoring
   template2: [
-    { type: 'button', text: '5 - Strongly Agree', action: 'fillSurvey(surveySessionId, surveyTopicId, 1)' },
-    { type: 'button', text: '4 - Agree', action: 'fillSurvey(surveySessionId, surveyTopicId, 2)' },
-    { type: 'text', text: '3 - Neutral', action: 'fillSurvey(surveySessionId, surveyTopicId, 3)' },
-    { type: 'text', text: '2 - Disagree', action: 'fillSurvey(surveySessionId, surveyTopicId, 4)' },
-    { type: 'text', text: '1 - Strongly Disagree', action: 'fillSurvey(surveySessionId, surveyTopicId, 5)' }
+    { type: 'button', text: '5 - Strongly Agree', action: 'setSurvey(surveyTopicName, surveyTopicId, 1)' },
+    { type: 'button', text: '4 - Agree', action: 'setSurvey(surveyTopicName, surveyTopicId, 2)' },
+    { type: 'button', text: '3 - Neutral', action: 'setSurvey(surveyTopicName, surveyTopicId, 3)' },
+    { type: 'button', text: '2 - Disagree', action: 'setSurvey(surveyTopicName, surveyTopicId, 4)' },
+    { type: 'button', text: '1 - Strongly Disagree', action: 'setSurvey(surveyTopicName, surveyTopicId, 5)' }
   ]
 }
 
@@ -35,13 +39,18 @@ const states = [
         nextState: 'MAIN_demographics'
       },
       {
+        condition: 'state.didSurvey !== true',
+        nextState: 'MAIN_survey'
+      },
+      {
         condition: null,
         messages: [
           'How can I help you? :)'
         ],
         responses: [
           { type: 'button', text: 'Who are you again?', nextState: 'MAIN_introduction' },
-          { type: 'button', text: 'Update my demographics information', nextState: 'MAIN_demographic' }
+          { type: 'button', text: 'Update my demographics information', nextState: 'MAIN_demographics' },
+          { type: 'button', text: 'Fill up the survey again', nextState: 'MAIN_survey' }
         ],
         nextState: null
       }
@@ -64,9 +73,9 @@ const states = [
       {
         condition: null,
         messages: [
-          'I\'m here to help you make ${state.company.name} the best place to work at!',
+          'I\'m here to help you make ${company.name} the best place to work at!',
           `ll be asking you questions regarding to your experience <br>working at P&G. But don't fret, all the information is anonymous.<br>I am fully committed to protect your privacy :)<br><br><a href="googledocslinkhere">Learn More</a>`,
-          'I will then use the collective feedbacks from employees at ${state.company.name} to provide feedback to the HRD, which in turn could make company-wide initiatives to make everyone healthier, happier, and more productive'
+          'I will then use the collective feedbacks from employees at ${company.name} to provide feedback to the HRD, which in turn could make company-wide initiatives to make everyone healthier, happier, and more productive'
         ],
         responses: []
       },
@@ -90,8 +99,8 @@ const states = [
           'What questions do you have for me? :)'
         ],
         responses: [
-          { type: 'button', text: 'How can we help improving P&G?', nextState: 'MAIN_introduction_faq_how-cobbie-improve-corporation' },
-          { type: 'button', text: 'Nope, no more question!' }
+          { type: 'button', text: 'How can we help improving ${company.name}?', nextState: 'MAIN_introduction_faq_how-cobbie-improve-corporation' },
+          { type: 'button', text: 'Nope, no more question!', action: 'finishIntroduction()' }
         ]
       }
     ]
@@ -102,10 +111,10 @@ const states = [
       {
         condition: null,
         messages: [
-          'We will help ${state.company.name} become a better place through collective feedbacks of its employees',
-          'I will gather the experiences of all the employees throughout ${state.company.name}',
+          'We will help ${company.name} become a better place through collective feedbacks of its employees',
+          'I will gather the experiences of all the employees throughout ${company.name}',
           'All of these data that are gathered anonymously will be collected, and analysed',
-          `Through the analysis, I'll provide ${state.company.name} HRD with information on how it can be improved`
+          `Through the analysis, I'll provide ${company.name} HRD with information on how it can be improved`
         ],
         responses: [
           { type: 'button', text: 'Got it!' }
@@ -119,7 +128,7 @@ const states = [
       {
         condition: null,
         messages: [
-          'Before we can start improving ${state.company.name}, could you please provide some demographics information? This will only take 5 minutes.',
+          'Before we can start improving ${company.name}, could you please provide some demographics information? This will only take 5 minutes.',
           'And if you prefer not to answer a question, you can always skip it'
         ],
         responses: [
@@ -185,9 +194,9 @@ const states = [
         responses: [
           { type: 'button', text: 'Less than highschool', action: `setDemographics('highestEducation', 'less-than-highschool')` },
           { type: 'button', text: 'Highschool diploma or equivalent', action: `setDemographics('highestEducation', 'highschool-diploma')` },
-          { type: 'text', text: 'Bachelor degree', action: `setDemographics('highestEducation', 'bachelor-degree')` },
-          { type: 'text', text: 'Master degree', action: `setDemographics('highestEducation', 'master-degree')` },
-          { type: 'text', text: 'Doctorate degree', action: `setDemographics('highestEducation', 'doctorate-degree')` },
+          { type: 'button', text: 'Bachelor degree', action: `setDemographics('highestEducation', 'bachelor-degree')` },
+          { type: 'button', text: 'Master degree', action: `setDemographics('highestEducation', 'master-degree')` },
+          { type: 'button', text: 'Doctorate degree', action: `setDemographics('highestEducation', 'doctorate-degree')` },
           { type: 'button', text: 'I prefer not to say', action: `setDemographics('highestEducation', 'NA')` }
         ]
       },
@@ -199,24 +208,33 @@ const states = [
         responses: [
           { type: 'button', text: 'Married', action: `setDemographics('maritalStatus', 'married')` },
           { type: 'button', text: 'Divorced', action: `setDemographics('maritalStatus', 'divorced')` },
-          { type: 'text', text: 'Separated', action: `setDemographics('maritalStatus', 'separated')` },
-          { type: 'text', text: 'Widowed', action: `setDemographics('maritalStatus', 'widowed')` },
-          { type: 'text', text: 'Single', action: `setDemographics('maritalStatus', 'single')` },
+          { type: 'button', text: 'Separated', action: `setDemographics('maritalStatus', 'separated')` },
+          { type: 'button', text: 'Widowed', action: `setDemographics('maritalStatus', 'widowed')` },
+          { type: 'button', text: 'Single', action: `setDemographics('maritalStatus', 'single')` },
           { type: 'button', text: 'I prefer not to say', action: `setDemographics('maritalStatus', 'NA')` }
         ]
       },
       {
         condition: null,
         messages: [
-          'How many years have you been with ${state.company.name}?'
+          'How many years have you been with ${company.name}?'
         ],
         responses: [
           { type: 'button', text: '0-2', action: `setDemographics('yearsWithCompany', '0-2')` },
           { type: 'button', text: '3-5', action: `setDemographics('yearsWithCompany', '3-5')` },
-          { type: 'text', text: '6-10', action: `setDemographics('yearsWithCompany', '6-10')` },
-          { type: 'text', text: '11-15', action: `setDemographics('yearsWithCompany', '11-15')` },
-          { type: 'text', text: '15+', action: `setDemographics('yearsWithCompany', '15+')` },
+          { type: 'button', text: '6-10', action: `setDemographics('yearsWithCompany', '6-10')` },
+          { type: 'button', text: '11-15', action: `setDemographics('yearsWithCompany', '11-15')` },
+          { type: 'button', text: '15+', action: `setDemographics('yearsWithCompany', '15+')` },
           { type: 'button', text: 'I prefer not to say', action: `setDemographics('yearsWithCompany', 'NA')` }
+        ]
+      },
+      {
+        condition: null,
+        messages: [
+          `That's it! Thanks for taking the time to fill up the demographics :)`
+        ],
+        responses: [
+          { type: 'button', text: 'Alright!' }
         ]
       }
     ]
@@ -226,12 +244,12 @@ const states = [
     logics: [
       {
         messages: [
-          'To get started improving ${state.company.name}, I need you to provide honest feedback abour your working experience',
+          'To get started improving ${company.name}, I need you to provide honest feedback abour your working experience',
           `It's just as how very often people say that sharing is caring :)`,
           `This survey is going to take 10 minutes to complete and needs to be taken without distractions.`
         ],
         responses: [
-          { type: 'button', text: 'Sure thing, I have an undistracted 10 minutes!' },
+          { type: 'button', text: 'Sure thing, I have an undistracted 10 minutes!', action: 'createSurvey()' },
           { type: 'button', text: 'Umm, who are you again?', nextState: 'MAIN_introduction' }
         ]
       }, {
@@ -513,7 +531,7 @@ const states = [
           'See you later!'
         ],
         responses: [
-          { type: 'button', text: 'Bye!', nextState: 'MAIN', clearState: true }
+          { type: 'button', text: 'Bye!' }
         ],
         nextState: null
       }

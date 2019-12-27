@@ -20,6 +20,13 @@ export default function addTables (sequelize: Sequelize.Sequelize, models: Seque
   })
   models.Demographics.belongsTo(models.User)
 
+  models.Survey = sequelize.define('survey', {
+    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    // Stringified JSON of the entire survey
+    value: { type: Sequelize.TEXT }
+  })
+  models.Survey.belongsTo(models.User)
+
   // TODO: Rename this to SerializedRunningState to avoid confusion
   models.SerializedRunningStates = sequelize.define('serializedRunningStates', {
     id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },

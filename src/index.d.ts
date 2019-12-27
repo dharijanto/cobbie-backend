@@ -26,6 +26,12 @@ interface Demographics extends BaseModel {
   userId: number
 }
 
+interface Survey extends BaseModel {
+  value: string
+  userId: number
+}
+
+// TODO: Use this type definition on FSMService
 interface UserEnvironment {
   company: {
     name: string
@@ -40,6 +46,7 @@ interface StateLogic {
   // Id of the following state
   nextState: string
   messages: string[]
+  variables?: object
   responses: Array<StateLogicResponse>
   clearState?: boolean
 }

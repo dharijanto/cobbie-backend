@@ -4,7 +4,7 @@ import SequelizeService from '../services/sequelize-service'
 import { SiteData } from '../site-definitions'
 import FSMService from '../services/fsm-service'
 
- const path = require('path')
+const path = require('path')
 
 let log = require('npmlog')
 
