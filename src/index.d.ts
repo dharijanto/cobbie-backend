@@ -49,6 +49,7 @@ interface StateLogic {
   variables?: object
   responses: Array<StateLogicResponse>
   clearState?: boolean
+  action?: string
 }
 
 interface StateLogicResponse {
@@ -79,8 +80,19 @@ interface SerializedRunningStates extends BaseModel {
   currentLogic: string
 }
 
+type FrontendResponseType = 'nop' | 'button' | 'checkbox' | 'text'
 interface FrontendResponse extends BaseModel {
   timestamp: number
-  responseIndex: number
-  text?: string
+  type: FrontendResponseType
+  responseIndex?: number
+  responseIndexes: number[]
+  data?: string
+}
+
+interface SerializedFrontendResponse extends BaseModel {
+  timestamp: number
+  type: FrontendResponseType
+  responseIndex?: number
+  responseIndexes?: string
+  data?: string
 }

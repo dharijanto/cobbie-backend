@@ -125,7 +125,7 @@ class FSMService extends CRUDService {
           timestamp: runningStates.timestamp,
           messages: FSMHelper.parseTemplateStrings(runningStates.currentLogic.messages, userEnv),
           responses: runningStates.currentLogic.responses.map(response => {
-            return { type: response.type, text: '' + response.text }
+            return { type: response.type, text: FSMHelper.parseTemplateString(response.text, userEnv) }
           })
         }
       }
@@ -249,72 +249,74 @@ class FSMService extends CRUDService {
     return this.generateRunningStates(pendingLogics, userEnvironment)
   }
 
-  // TODO: Handle action that is not on response but on the state itself
-  private updateRunningStates (lastState: RunningStates,
+  private updateRunningStates (runningStates: RunningStates,
       frontendResponse: FrontendResponse, userEnv: UserEnvironment): Promise<NCResponse<RunningStates>> {
-    log.verbose(TAG, `updateRunningStates(): lastState=${JSON.stringify(lastState)} frontendResponse=${JSON.stringify(frontendResponse)}`)
-    const selectedIndex = frontendResponse.responseIndex
-    const pendingLogics = _.cloneDeep(lastState.pendingLogics)
+    return FSMHelper.validateFrontendResponse(frontendResponse, runningStates.currentLogic.responses).then(resp => {
+      if (resp.status) {
+        let nextState
+        let responseAction: Promise<any> = Promise.resolve()
+        const stateVariables = runningStates.currentLogic.variables || {}
+        const pendingLogics = _.cloneDeep(runningStates.pendingLogics)
+        if (frontendResponse.type === 'nop') {
+          // Nothing
+        } else if (frontendResponse.type === 'button') {
+          if (frontendResponse.responseIndex === undefined) {
+            return { status: false, errMessage: 'responseIndex is required!' }
+          } else {
+            const response = runningStates.currentLogic.responses[frontendResponse.responseIndex]
+            // Execute action embedded on the selected response
+            if (response.action) {
+              responseAction = FSMHelper.executeAction(response.action, { ...userEnv, ...stateVariables })
+            }
+            // If selected response request state to be cleared
+            if (response.clearState) {
+              while (pendingLogics.length > 0) {
+                log.verbose(TAG, 'updateRunningStates(): clearState is true, clearning pendingLogics...')
+                pendingLogics.pop()
+              }
+            }
+            // If selected repsonse has a specified nextState
+            if (response.nextState) {
+              nextState = FSMHelper.getStateByName(response.nextState)
+            }
+          }
+        } else if (frontendResponse.type === 'checkbox') {
+          // TODO
+          // 1. Accumulate selected checkboxes data into object
+          // 2. Pass the object when parsing StateLogic's action.
+          // 3. Execute StateLogic's action
+          throw new Error('Not yet implemented!')
+        } else if (frontendResponse.type === 'text') {
+          throw new Error('Not yet implemented!')
+        } else {
+          return { status: false, errMessage: `Invalid frontendResponse.type=${frontendResponse.type}` }
+        }
+        // If there isn't state specified by selected response, we use nextState specified by the State
+        if (!nextState && runningStates.currentLogic.nextState) {
+          nextState = FSMHelper.getStateByName(runningStates.currentLogic.nextState)
+        }
 
-    let nextState
-    let action: Promise<any> = Promise.resolve()
-    if (selectedIndex === undefined && lastState.currentLogic.responses.length > 0) {
-      return Promise.resolve({ status: false, errMessage: `Response is required!` })
-    } else if (selectedIndex !== undefined &&
-        (lastState.currentLogic.responses === undefined || lastState.currentLogic.responses.length === 0)) {
-      return Promise.resolve({ status: false, errMessage: `Response is not expected!` })
-    } else if (selectedIndex !== undefined && lastState.currentLogic.responses.length > 0) {
-      if (selectedIndex >= lastState.currentLogic.responses.length || selectedIndex < 0) {
-        return Promise.resolve({ status: false, errMessage: `Response out of bound!` })
+        if (nextState) {
+          log.verbose(TAG, `updateRunningStates(): nextState=${JSON.stringify(nextState)}`)
+          nextState.logics.reverse().forEach(logic => {
+            pendingLogics.unshift(logic)
+          })
+        }
+
+        return responseAction.then(() => {
+          // TODO: Update the state
+          let runningStates: RunningStates
+          try {
+            runningStates = this.generateRunningStates(pendingLogics, userEnv)
+          } catch (e) {
+            log.info(TAG, `updateRunningStates(): No more states! Loop back to main state!`)
+            runningStates = this.generateNewRunningStates(userEnv)
+          }
+          return { status: true, data: runningStates } as NCResponse<RunningStates>
+        })
       } else {
-        if (lastState.currentLogic.responses[selectedIndex].type === 'text') {
-          if (!frontendResponse.text) {
-            return Promise.resolve({ status: false, errMessage: `Response is required!` })
-          }
-        }
-        const response = lastState.currentLogic.responses[frontendResponse.responseIndex]
-        // Execute action embedded on the selected response
-        if (response.action) {
-          const stateVariables = lastState.currentLogic.variables || {}
-          action = FSMHelper.executeAction(response.action, { ...userEnv, ...stateVariables })
-        }
-
-        // If selected response request state to be cleared
-        if (response.clearState) {
-          while (pendingLogics.length > 0) {
-            log.verbose(TAG, 'updateRunningStates(): clearState is true, clearning pendingLogics...')
-            pendingLogics.pop()
-          }
-        }
-        // If selected repsonse has a specified nextState
-        if (response.nextState) {
-          nextState = FSMHelper.getStateByName(response.nextState)
-        }
+        return { status: false, errMessage: `Invalid frontendResponse: ${resp.errMessage}` }
       }
-    }
-
-    // If there isn't state specified by selected response, we use nextState specified by the State
-    if (!nextState && lastState.currentLogic.nextState) {
-      nextState = FSMHelper.getStateByName(lastState.currentLogic.nextState)
-    }
-
-    if (nextState) {
-      log.verbose(TAG, `updateRunningStates(): nextState=${JSON.stringify(nextState)}`)
-      nextState.logics.reverse().forEach(logic => {
-        pendingLogics.unshift(logic)
-      })
-    }
-
-    return action.then(() => {
-      // TODO: Update the state
-      let runningStates
-      try {
-        runningStates = this.generateRunningStates(pendingLogics, userEnv)
-      } catch (e) {
-        log.info(TAG, `updateRunningStates(): No more states! Loop back to main state!`)
-        runningStates = this.generateNewRunningStates(userEnv)
-      }
-      return { status: true, data: runningStates }
     })
   }
 }

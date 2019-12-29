@@ -7,7 +7,6 @@ import FSMStates, * as AllFSMStates from '../data/states-trimmed'
 import { executeAction } from '../libs/fsm-functions'
 
 const DEBUG = false
-const state = AllFSMStates.state
 
 function debugMessage (message) {
   if (DEBUG) {

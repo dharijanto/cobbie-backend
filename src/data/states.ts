@@ -1,13 +1,3 @@
-// These variables are just placeholders, they are going to be replaced during runtime
-const company = {
-  name: 'P&G'
-}
-const state = {
-  company: {
-    name: 'P&G'
-  }
-}
-
 const surveyResponsesTemplates = {
   template1: [
     { type: 'button', text: '5 - Strongly Agree', action: 'setSurvey(surveyTopicName, surveyTopicId, 5)' },
@@ -74,7 +64,7 @@ const states = [
         condition: null,
         messages: [
           'I\'m here to help you make ${company.name} the best place to work at!',
-          `ll be asking you questions regarding to your experience <br>working at P&G. But don't fret, all the information is anonymous.<br>I am fully committed to protect your privacy :)<br><br><a href="googledocslinkhere">Learn More</a>`,
+          'll be asking you questions regarding to your experience <br>working at ${company.name}. But don\'t fret, all the information is anonymous.<br>I am fully committed to protect your privacy :)<br><br><a href="googledocslinkhere">Learn More</a>',
           'I will then use the collective feedbacks from employees at ${company.name} to provide feedback to the HRD, which in turn could make company-wide initiatives to make everyone healthier, happier, and more productive'
         ],
         responses: []
@@ -114,7 +104,7 @@ const states = [
           'We will help ${company.name} become a better place through collective feedbacks of its employees',
           'I will gather the experiences of all the employees throughout ${company.name}',
           'All of these data that are gathered anonymously will be collected, and analysed',
-          `Through the analysis, I'll provide ${company.name} HRD with information on how it can be improved`
+          'Through the analysis, I\'ll provide ${company.name} HRD with information on how it can be improved'
         ],
         responses: [
           { type: 'button', text: 'Got it!' }
@@ -173,7 +163,8 @@ const states = [
           { type: 'button', text: 'I prefer not to say', action: `setDemographics('spanishOrLatino', 'NA')` }
         ]
       },
-      {
+      // For now, we skipped over non-button responses, as it's not yet implemented!
+      /* {
         condition: null,
         messages: [
           'What is your ethnicity?'
@@ -185,7 +176,7 @@ const states = [
           { type: 'checkbox', text: 'White', value: 'white', id: 'ethnicities' }
         ],
         action: `setDemographics('ethnicities', ethnicities)`
-      },
+      }, */
       {
         condition: null,
         messages: [
@@ -541,6 +532,5 @@ const states = [
 
 export default states
 export {
-  state,
   surveyResponsesTemplates
 }

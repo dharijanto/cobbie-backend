@@ -1,4 +1,4 @@
-import fullStates, { state } from './states'
+import fullStates from './states'
 
 /* This is a shortened version of states, used for development purposes */
 const states = fullStates
@@ -13,6 +13,3 @@ for (let i = 0; i < states.length; i++) {
 }
 
 export default states
-export {
-  state
-}

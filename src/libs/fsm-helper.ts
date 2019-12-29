@@ -72,7 +72,7 @@ export default class {
     }
   }
 
-  static parseTemplateString (text, env): String {
+  static parseTemplateString (text, env): string {
     this.debugMessage(`parseTemplateString(): text=${text} env=${env}`)
     return fillTemplate(text, env)
   }
@@ -80,4 +80,36 @@ export default class {
   static parseTemplateStrings (texts: string[], env): String[] {
     return texts.map(text => this.parseTemplateString(text, env))
   }
+
+  static validateFrontendResponse (frontendResponse: FrontendResponse, responseOptions: StateLogicResponse[]): Promise<NCResponse<null>> {
+    if (frontendResponse.type === 'nop') {
+      if (responseOptions.length > 0) {
+        return Promise.resolve({ status: false, errMessage: `Non-nop is expected!` })
+      }
+    } else if (frontendResponse.type === 'button') {
+      if (frontendResponse.responseIndex === undefined && responseOptions.length > 0) {
+        return Promise.resolve({ status: false, errMessage: `responseIndex is required!` })
+      } else if (frontendResponse.responseIndex !== undefined &&
+          (responseOptions === undefined || responseOptions.length === 0)) {
+        return Promise.resolve({ status: false, errMessage: `Response is not expected!` })
+      } else if (frontendResponse.responseIndex !== undefined && responseOptions.length > 0) {
+        if (frontendResponse.responseIndex >= responseOptions.length || frontendResponse.responseIndex < 0) {
+          return Promise.resolve({ status: false, errMessage: `responseIndex is out of bound!` })
+        }
+      }
+    } else if (frontendResponse.type === 'text') {
+      if (!frontendResponse.data) {
+        return Promise.resolve({ status: false, errMessage: `data is required!` })
+      }
+    } else if (frontendResponse.type === 'checkbox') {
+      if (frontendResponse.responseIndexes === undefined || typeof frontendResponse.responseIndexes !== 'object') {
+        return Promise.resolve({ status: false, errMessage: `responseIndexes is required!` })
+      }
+    } else {
+      return Promise.resolve({ status: false, errMessage: 'Unexpected type: ' + frontendResponse.type })
+    }
+
+    return Promise.resolve({ status: true })
+  }
+
 }
