@@ -85,7 +85,7 @@ interface FrontendResponse extends BaseModel {
   timestamp: number
   type: FrontendResponseType
   responseIndex?: number
-  responseIndexes: number[]
+  responseIndexes?: number[]
   data?: string
 }
 

@@ -67,7 +67,9 @@ const states = [
           'll be asking you questions regarding to your experience <br>working at ${company.name}. But don\'t fret, all the information is anonymous.<br>I am fully committed to protect your privacy :)<br><br><a href="googledocslinkhere">Learn More</a>',
           'I will then use the collective feedbacks from employees at ${company.name} to provide feedback to the HRD, which in turn could make company-wide initiatives to make everyone healthier, happier, and more productive'
         ],
-        responses: []
+        responses: [
+          { type: 'button', text: 'Got it!' }
+        ]
       },
       {
         condition: null,
