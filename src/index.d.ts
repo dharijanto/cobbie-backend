@@ -28,6 +28,7 @@ interface Demographics extends BaseModel {
 
 interface Survey extends BaseModel {
   value: string
+  result: string
   userId: number
 }
 

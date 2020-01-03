@@ -5,7 +5,7 @@ import * as Promise from 'bluebird'
 
 import { Sequelize, Models } from 'sequelize'
 
-import AppConfig from './app-config'
+import * as AppConfig from './app-config'
 
 export interface Database {
   sequelize: Sequelize

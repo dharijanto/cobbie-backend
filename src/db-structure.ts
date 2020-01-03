@@ -23,7 +23,9 @@ export default function addTables (sequelize: Sequelize.Sequelize, models: Seque
   models.Survey = sequelize.define('survey', {
     id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
     // Stringified JSON of the entire survey
-    value: { type: Sequelize.TEXT }
+    value: { type: Sequelize.TEXT },
+    // Stringified JSON of the result after it's processed on the sheet
+    result: { type: Sequelize.TEXT }
   })
   models.Survey.belongsTo(models.User)
 

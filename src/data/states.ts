@@ -518,7 +518,7 @@ const states = [
           `That's it! Thanks for taking your time to take this survey!`
         ],
         responses: [
-          { type: 'button', text: `You're welcome!` }
+          { type: 'button', text: `Alright!`, action: `processSurvey()` }
         ]
       }
     ]
