@@ -5,7 +5,7 @@ import * as Promise from 'bluebird'
 import * as fillTemplate from 'es6-dynamic-template'
 import * as log from 'npmlog'
 
-import FSMStates, * as AllFSMStates from '../data/states-trimmed'
+import FSMStates, * as AllFSMStates from '../data/states'
 const DEBUG = true
 const TAG = 'FSMHelper'
 

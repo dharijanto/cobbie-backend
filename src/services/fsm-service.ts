@@ -298,6 +298,8 @@ class FSMService extends CRUDService {
 
         if (nextState) {
           log.verbose(TAG, `updateRunningStates(): nextState=${JSON.stringify(nextState)}`)
+          // After a jump, we want to go back to the same state
+          pendingLogics.unshift(runningStates.currentLogic)
           nextState.logics.reverse().forEach(logic => {
             pendingLogics.unshift(logic)
           })

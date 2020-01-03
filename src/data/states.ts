@@ -64,7 +64,7 @@ const states = [
         condition: null,
         messages: [
           'I\'m here to help you make ${company.name} the best place to work at!',
-          'll be asking you questions regarding to your experience <br>working at ${company.name}. But don\'t fret, all the information is anonymous.<br>I am fully committed to protect your privacy :)<br><br><a href="googledocslinkhere">Learn More</a>',
+          'I will be asking you questions regarding to your experience working at ${company.name}. But don\'t fret, all the information is anonymous. I am fully committed to protect your privacy :) You can check http://googledocslink to learn more',
           'I will then use the collective feedbacks from employees at ${company.name} to provide feedback to the HRD, which in turn could make company-wide initiatives to make everyone healthier, happier, and more productive'
         ],
         responses: [
@@ -384,7 +384,7 @@ const states = [
       }, {
         condition: null,
         messages: [
-          `People at work me in a professional manner.`
+          `People at work view me in a professional manner.`
         ],
         variables: {
           surveyTopicId: 15,
@@ -511,6 +511,15 @@ const states = [
           surveyTopicName: 'Personal Accomplishment'
         },
         responses: surveyResponsesTemplates.template2
+      },
+      {
+        condition: null,
+        messages: [
+          `That's it! Thanks for taking your time to take this survey!`
+        ],
+        responses: [
+          { type: 'button', text: `You're welcome!` }
+        ]
       }
     ]
   },
