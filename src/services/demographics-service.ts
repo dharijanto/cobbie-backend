@@ -10,10 +10,14 @@ class DemographicsService extends CRUDService {
     return super.create<Demographics>('Demographics', { userId })
   }
 
-  setDemographics (userId: number, key, value) {
+  getLatestDemographics (userId: number) {
     return super.rawReadOneQuery(
-        `SELECT * FROM demographics WHERE userId = ${userId} ORDER BY createdAt DESC LIMIT 1`
-    ).then(resp => {
+      `SELECT * FROM demographics WHERE userId = ${userId} ORDER BY createdAt DESC LIMIT 1`
+    )
+  }
+
+  setDemographics (userId: number, key, value) {
+    return this.getLatestDemographics(userId).then(resp => {
       if (resp.status && resp.data) {
         const demographics = JSON.parse(resp.data.value || '{}')
         if (key in demographics) {

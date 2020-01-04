@@ -29,7 +29,7 @@
     "gulp-watch": "^5.0.1",
     "sass": "^1.17.2",
     "tsconfig": "^7.0.0",
-    "typescript": "^3.0.0-dev.20180619"
+    "typescript": "^3.7.4"
   },
   "dependencies": {
     "bluebird": "^3.7.2",

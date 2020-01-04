@@ -17,7 +17,8 @@ var tsProject = ts.createProject('tsconfig.json')
 // NCloud Site Smplementation (i.e. filos, tokowatch, etc)
 const sitesDepsFiles = [
   'src/app/views/**',
-  'src/cms/views/**'
+  'src/cms/views/**',
+  'src/app-config.js.dist'
 ]
 const sitesFiles = project.config.include
   .concat(project.config.exclude.map(excludePath => '!' + excludePath))

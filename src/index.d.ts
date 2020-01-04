@@ -27,7 +27,9 @@ interface Demographics extends BaseModel {
 }
 
 interface Survey extends BaseModel {
+  // Stringified json of the survey data
   value: string
+  // Stringified json of the result
   result: string
   userId: number
 }

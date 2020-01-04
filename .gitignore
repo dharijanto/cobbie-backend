@@ -1,3 +1,4 @@
 node_modules/
 configs/
 token.json
+src/app-config.js

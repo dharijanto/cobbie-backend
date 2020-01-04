@@ -134,12 +134,12 @@ const states = [
           'How old are you?'
         ],
         responses: [
-          { type: 'button', text: '18-24', action: `setDemographics('age', '18-24')` },
-          { type: 'button', text: '25-34', action: `setDemographics('age', '25-34')` },
-          { type: 'button', text: '35-44', action: `setDemographics('age', '35-44')` },
-          { type: 'button', text: '45-54', action: `setDemographics('age', '45-54')` },
-          { type: 'button', text: '54+', action: `setDemographics('age', '54+')` },
-          { type: 'button', text: 'I prefer not to say', action: `setDemographics('age', 'NA')` }
+          { type: 'button', text: '18-24', action: `setDemographics('age', [1, '18-24'])` },
+          { type: 'button', text: '25-34', action: `setDemographics('age', [2, '25-34'])` },
+          { type: 'button', text: '35-44', action: `setDemographics('age', [3, '35-44'])` },
+          { type: 'button', text: '45-54', action: `setDemographics('age', [4, '45-54'])` },
+          { type: 'button', text: '54+', action: `setDemographics('age', [5, '54+'])` },
+          { type: 'button', text: 'I prefer not to say', action: `setDemographics('age', ['', 'NA'])` }
         ]
       },
       {
@@ -148,10 +148,10 @@ const states = [
           'What is your gender?'
         ],
         responses: [
-          { type: 'button', text: 'Male', action: `setDemographics('gender', 'male')` },
-          { type: 'button', text: 'Female', action: `setDemographics('gender', 'female')` },
-          { type: 'text', text: 'Other', action: `setDemographics('gender', input)` },
-          { type: 'button', text: 'I prefer not to say', action: `setDemographics('age', 'NA')` }
+          { type: 'button', text: 'Male', action: `setDemographics('gender', [1, 'male'])` },
+          { type: 'button', text: 'Female', action: `setDemographics('gender', [2, 'female'])` },
+          // { type: 'text', text: 'Other', action: `setDemographics('gender', input)` },
+          { type: 'button', text: 'I prefer not to say', action: `setDemographics('age', ['', 'NA'])` }
         ]
       },
       {
@@ -160,9 +160,9 @@ const states = [
           'Are you Spanish or Latino?'
         ],
         responses: [
-          { type: 'button', text: 'Yes', action: `setDemographics('spanishOrLatino', true)` },
-          { type: 'button', text: 'No', action: `setDemographics('spanishOrLatino', false)` },
-          { type: 'button', text: 'I prefer not to say', action: `setDemographics('spanishOrLatino', 'NA')` }
+          { type: 'button', text: 'Yes', action: `setDemographics('spanishOrLatino', [1, true])` },
+          { type: 'button', text: 'No', action: `setDemographics('spanishOrLatino', [2, false])` },
+          { type: 'button', text: 'I prefer not to say', action: `setDemographics('spanishOrLatino', ['', 'NA'])` }
         ]
       },
       // For now, we skipped over non-button responses, as it's not yet implemented!
@@ -185,12 +185,12 @@ const states = [
           `What's your highest education?`
         ],
         responses: [
-          { type: 'button', text: 'Less than highschool', action: `setDemographics('highestEducation', 'less-than-highschool')` },
-          { type: 'button', text: 'Highschool diploma or equivalent', action: `setDemographics('highestEducation', 'highschool-diploma')` },
-          { type: 'button', text: 'Bachelor degree', action: `setDemographics('highestEducation', 'bachelor-degree')` },
-          { type: 'button', text: 'Master degree', action: `setDemographics('highestEducation', 'master-degree')` },
-          { type: 'button', text: 'Doctorate degree', action: `setDemographics('highestEducation', 'doctorate-degree')` },
-          { type: 'button', text: 'I prefer not to say', action: `setDemographics('highestEducation', 'NA')` }
+          { type: 'button', text: 'Less than highschool', action: `setDemographics('highestEducation', [1, 'less-than-highschool'])` },
+          { type: 'button', text: 'Highschool diploma or equivalent', action: `setDemographics('highestEducation', [2, 'highschool-diploma'])` },
+          { type: 'button', text: 'Bachelor degree', action: `setDemographics('highestEducation', [3, 'bachelor-degree'])` },
+          { type: 'button', text: 'Master degree', action: `setDemographics('highestEducation', [4, 'master-degree'])` },
+          { type: 'button', text: 'Doctorate degree', action: `setDemographics('highestEducation', [5, 'doctorate-degree'])` },
+          { type: 'button', text: 'I prefer not to say', action: `setDemographics('highestEducation', [6, 'NA'])` }
         ]
       },
       {
@@ -199,12 +199,12 @@ const states = [
           `What's your marital status?`
         ],
         responses: [
-          { type: 'button', text: 'Married', action: `setDemographics('maritalStatus', 'married')` },
-          { type: 'button', text: 'Divorced', action: `setDemographics('maritalStatus', 'divorced')` },
-          { type: 'button', text: 'Separated', action: `setDemographics('maritalStatus', 'separated')` },
-          { type: 'button', text: 'Widowed', action: `setDemographics('maritalStatus', 'widowed')` },
-          { type: 'button', text: 'Single', action: `setDemographics('maritalStatus', 'single')` },
-          { type: 'button', text: 'I prefer not to say', action: `setDemographics('maritalStatus', 'NA')` }
+          { type: 'button', text: 'Married', action: `setDemographics('maritalStatus', [1, 'married'])` },
+          { type: 'button', text: 'Divorced', action: `setDemographics('maritalStatus', [2, 'divorced'])` },
+          { type: 'button', text: 'Separated', action: `setDemographics('maritalStatus', [3, 'separated'])` },
+          { type: 'button', text: 'Widowed', action: `setDemographics('maritalStatus', [4, 'widowed'])` },
+          { type: 'button', text: 'Single', action: `setDemographics('maritalStatus', [5, 'single'])` },
+          { type: 'button', text: 'I prefer not to say', action: `setDemographics('maritalStatus', [6, 'NA'])` }
         ]
       },
       {
@@ -213,12 +213,12 @@ const states = [
           'How many years have you been with ${company.name}?'
         ],
         responses: [
-          { type: 'button', text: '0-2', action: `setDemographics('yearsWithCompany', '0-2')` },
-          { type: 'button', text: '3-5', action: `setDemographics('yearsWithCompany', '3-5')` },
-          { type: 'button', text: '6-10', action: `setDemographics('yearsWithCompany', '6-10')` },
-          { type: 'button', text: '11-15', action: `setDemographics('yearsWithCompany', '11-15')` },
-          { type: 'button', text: '15+', action: `setDemographics('yearsWithCompany', '15+')` },
-          { type: 'button', text: 'I prefer not to say', action: `setDemographics('yearsWithCompany', 'NA')` }
+          { type: 'button', text: '0-2', action: `setDemographics('yearsWithCompany', [1, '0-2'])` },
+          { type: 'button', text: '3-5', action: `setDemographics('yearsWithCompany', [2, '3-5'])` },
+          { type: 'button', text: '6-10', action: `setDemographics('yearsWithCompany', [3, '6-10'])` },
+          { type: 'button', text: '11-15', action: `setDemographics('yearsWithCompany', [4, '11-15'])` },
+          { type: 'button', text: '15+', action: `setDemographics('yearsWithCompany', [5, '15+'])` },
+          { type: 'button', text: 'I prefer not to say', action: `setDemographics('yearsWithCompany', [6, 'NA'])` }
         ]
       },
       {
@@ -227,7 +227,7 @@ const states = [
           `That's it! Thanks for taking the time to fill up the demographics :)`
         ],
         responses: [
-          { type: 'button', text: 'Alright!' }
+          { type: 'button', text: 'Alright!', nextState: 'MAIN', clearState: true }
         ]
       }
     ]
