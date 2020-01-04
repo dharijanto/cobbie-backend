@@ -88,8 +88,53 @@ export default class {
         if (err) {
           reject(err)
         }
-        log.verbose(TAG, JSON.stringify(response, null, 2))
-        resolve(response)
+        if (response.status === 200) {
+          resolve({ status: true, data: response.data.values })
+        } else {
+          resolve({ status: false, errMessage: response.statusText })
+        }
+      })
+    })
+  }
+
+  static getRow (range) {
+    const credentials = require(path.join(__dirname, '../../configs/google-api-credentials.json'))
+    const { client_secret, client_id, redirect_uris } = credentials.installed
+    const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
+    oAuth2Client.setCredentials(JSON.parse(AppConfig.GSHEET_API.OAUTH_TOKEN))
+
+    let request = {
+      // The ID of the spreadsheet to retrieve data from.
+      spreadsheetId: AppConfig.GSHEET_API.SPREADSHEET_ID,  // TODO: Update placeholder value.
+
+      // The A1 notation of the values to retrieve.
+      range,  // TODO: Update placeholder value.
+
+      // How values should be represented in the output.
+      // The default render option is ValueRenderOption.FORMATTED_VALUE.
+      valueRenderOption: 'FORMATTED_VALUE',  // TODO: Update placeholder value.
+
+      // How dates, times, and durations should be represented in the output.
+      // This is ignored if value_render_option is
+      // FORMATTED_VALUE.
+      // The default dateTime render option is [DateTimeRenderOption.SERIAL_NUMBER].
+      dateTimeRenderOption: 'FORMATTED_STRING',  // TODO: Update placeholder value.
+      majorDimension: 'ROWS',
+
+      auth: oAuth2Client
+    }
+
+    return new Promise((resolve, reject) => {
+      sheets.spreadsheets.values.get(request, function (err, response) {
+        if (err) {
+          reject(err)
+        }
+        if (response.status === 200) {
+          resolve({ status: true, data: response.data.values })
+        } else {
+          resolve({ status: false, errMessage: response.statusText })
+        }
+        // TODO: Change code below to process the `response` object:
       })
     })
   }
