@@ -17,10 +17,24 @@ const models = sequelizeSync(sequelize, {})
 sequelize.sync().then(() => {
   SequelizeService.initialize(sequelize, models)
   SurveyService.processSurvey(1).then(resp => {
-    console.dir(resp)
+    // console.dir(resp)
     if (resp.status && resp.data) {
       const row = resp.data
-      GSheetHelper.insertRows('data!A2:AH1000', [row]).then(console.dir).catch(console.error)
+      GSheetHelper.insertRows('data!A2:AH1000', [row]).then(resp => {
+        if (resp.status && resp.data) {
+          const updatedRange = resp.data.updatedRange
+          console.log('Inserted new data to ' + JSON.stringify(updatedRange))
+          const nextRow = GSheetHelper.getNeighboringRow(updatedRange, -1)
+          // Wait 2 seconds for gsheet to do its job
+          setTimeout(() => {
+            GSheetHelper.getRow(`employee!${nextRow.startRange}:${nextRow.endRange}`).then(resp2 => {
+              console.log('Retrieved data from ' + JSON.stringify(nextRow) + ' which is' + JSON.stringify(resp2))
+            })
+          }, 1)
+        } else {
+          console.error('Failed to insert rows: ' + resp.errMessage)
+        }
+      })
     } else {
       console.error('Failed: ' + resp.errMessage)
     }

@@ -3,12 +3,16 @@ import * as Sequelize from 'sequelize'
 export default function addTables (sequelize: Sequelize.Sequelize, models: Sequelize.Models) {
   models.User = sequelize.define('user', {
     id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    username: { type: Sequelize.STRING },
+    saltedPass: { type: Sequelize.STRING },
+    salt: { type: Sequelize.STRING },
     didIntroduction: { type: Sequelize.BOOLEAN, defaultValue: false }
   })
 
   models.Company = sequelize.define('company', {
     id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: Sequelize.STRING, unique: true },
+    uniqueCode: { type: Sequelize.STRING, unique: true },
     employeesCount: { type: Sequelize.INTEGER }
   })
   models.Company.belongsTo(models.User)

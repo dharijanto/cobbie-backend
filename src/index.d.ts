@@ -13,6 +13,7 @@ interface BaseModel {
 
 interface Company extends BaseModel {
   name: string
+  uniqueCode: string
   employeesCount: number
   userId: number
 }

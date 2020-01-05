@@ -11,6 +11,27 @@ import * as AppConfig from '../app-config'
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 const TAG = 'GSheetHelper'
 
+// Turn data!A10:B10 into
+// {
+//    sheet: data,
+//    startRange: 'A10',
+//    endRange: 'B10
+// }
+function parseA1Notation (notation: string): NCResponse<{ sheet: string, startRange: string, endRange: string }> {
+  const result = notation.match('(.+)!(.+):(.+)')
+  if (result && result.length > 3) {
+    return { status: true, data: { sheet: result[1], startRange: result[2], endRange: result[3] } }
+  } else {
+    return { status: false }
+  }
+}
+
+export interface SheetRange {
+  sheet: string,
+  startRange: string,
+  endRange: string
+}
+
 export default class {
   /**
    * Get and store new token after prompting for user authorization, and then
@@ -60,7 +81,7 @@ export default class {
           ]
         ]
   */
-  static insertRows (range: string, rows: any[][]): Promise<any> {
+  static insertRows (range: string, rows: any[][]): Promise<NCResponse<{ values: any[][], updatedRange: SheetRange }>> {
     const credentials = require(path.join(__dirname, '../../configs/google-api-credentials.json'))
     const { client_secret, client_id, redirect_uris } = credentials.installed
     const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
@@ -75,7 +96,7 @@ export default class {
       // How the input data should be interpreted.
       valueInputOption: 'USER_ENTERED',  // TODO: Update placeholder value.
       // How the input data should be inserted.
-      insertDataOption: 'INSERT_ROWS',  // TODO: Update placeholder value.
+      insertDataOption: 'OVERWRITE',  // TODO: Update placeholder value.
       resource: {
         // TODO: Add desired properties to the request body.
         'values': rows
@@ -89,7 +110,22 @@ export default class {
           reject(err)
         }
         if (response.status === 200) {
-          resolve({ status: true, data: response.data.values })
+          const parseResp = parseA1Notation(response.data.updates.updatedRange)
+          let updatedRange = ''
+          if (parseResp.status) {
+            resolve({
+              status: true,
+              data: {
+                values: response.data.values,
+                updatedRange: parseResp.data!
+              }
+            })
+          } else {
+            resolve({
+              status: false,
+              errMessage: 'Failed to parse updated range!'
+            })
+          }
         } else {
           resolve({ status: false, errMessage: response.statusText })
         }
@@ -130,7 +166,12 @@ export default class {
           reject(err)
         }
         if (response.status === 200) {
-          resolve({ status: true, data: response.data.values })
+          resolve({
+            status: true,
+            data: {
+              values: response.data.values
+            }
+          })
         } else {
           resolve({ status: false, errMessage: response.statusText })
         }
@@ -139,7 +180,16 @@ export default class {
     })
   }
 
-  private static test () {
-    return
+  // Given a sheet
+  static getNeighboringRow (range: SheetRange, rowOffset) {
+    const { sheet, startRange, endRange } = range
+    const [, startCell, startRow] = startRange.match('([A-Z])([0-9]+)') || []
+    const [, endCell, endRow] = endRange.match('([A-Z])([0-9]+)') || []
+
+    return {
+      sheet,
+      startRange: `${startCell}${parseInt(startRow, 10) + rowOffset}`,
+      endRange: `${endCell}${parseInt(endRow, 10) + rowOffset}`
+    }
   }
 }
