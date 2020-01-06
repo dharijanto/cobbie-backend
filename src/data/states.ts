@@ -125,7 +125,7 @@ const states = [
         ],
         responses: [
           { type: 'button', text: 'Sure!', action: 'createDemographics()' },
-          { type: 'button', text: `I'll do it later`, nextState: 'MAIN_goodbye', clearState: true }
+          { type: 'button', text: `I'll do it later`, nextState: 'MAIN', clearState: true }
         ]
       },
       {

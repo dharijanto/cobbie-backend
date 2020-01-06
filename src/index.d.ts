@@ -48,7 +48,7 @@ interface StateLogic {
   // Code that eval-ed to boolean
   condition?: string
   // Id of the following state
-  nextState: string
+  nextState?: string
   messages: string[]
   variables?: object
   responses: Array<StateLogicResponse>
@@ -61,7 +61,7 @@ interface StateLogicResponse {
   text?: string
   action?: string
   clearState?: boolean
-  nextState: string
+  nextState?: string
 }
 
 interface State {

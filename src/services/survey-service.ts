@@ -1,6 +1,6 @@
 import CRUDService from './crud-service'
 import * as Promise from 'bluebird'
-import GSheetHelper from '../libs/gsheet-helper'
+import GSheetHelper, { SheetRange } from '../libs/gsheet-helper'
 import DemographicsService from './demographics-service'
 
 class SurveyService extends CRUDService {
@@ -29,6 +29,44 @@ class SurveyService extends CRUDService {
     return super.rawReadOneQuery(
       `SELECT * FROM surveys WHERE userId = ${userId} ORDER BY createdAt DESC LIMIT 1`
     )
+  }
+
+  private insertSurveyToSheetAndGetEmployeeResult (row: any[])
+      : Promise<NCResponse<{values: any[][], insertRange: SheetRange, resultRange: SheetRange}>> {
+    return GSheetHelper.insertRows('data!A2:AH1000', [row]).then(resp => {
+      if (resp.status && resp.data) {
+        const insertRange: SheetRange = resp.data.updatedRange
+        const insertRow = GSheetHelper.getRowNumber(insertRange)
+        if (insertRow !== null) {
+          // There's a difference of 1 row between 'data' table and 'employee' table
+          const employeeRow = insertRow - 1
+          // Wait 1 sec to make sure google sheet has processed the data
+          return Promise.delay(1000).then(() => {
+            const resultRange: SheetRange = {
+              sheet: 'employee',
+              startRange: `A${employeeRow}` ,
+              endRange: `S${employeeRow}`
+            }
+            return GSheetHelper.getRow(`${resultRange.sheet}!${resultRange.startRange}:${resultRange.endRange}`).then(resp => {
+              if (resp.status && resp.data) {
+                const data = {
+                  values: resp.data.values,
+                  insertRange,
+                  resultRange
+                }
+                return { status: true, data }
+              } else {
+                return { status: false, errMessage: 'Failed to retrieve employee result: ' + resp.errMessage }
+              }
+            })
+          })
+        } else {
+          return { status: false, errMessage: 'Failed to retrieve row number!' }
+        }
+      } else {
+        return { status: false, errMessage: 'Failed to insert survey: ' + resp.errMessage }
+      }
+    })
   }
 
   processSurvey (userId: number): Promise<NCResponse<any>> {
@@ -64,7 +102,20 @@ class SurveyService extends CRUDService {
             // hence we offset by 6
             pairs[parseInt(questionNumber, 10) + 6] = String(answer)
           })
-          return { status: true, data: pairs }
+          // Insert to GSheet
+          return this.insertSurveyToSheetAndGetEmployeeResult(pairs).then(resp => {
+            if (resp.status && resp.data) {
+              return super.update<Survey>('Survey', { result: JSON.stringify(resp.data) }, { id: survey.id }).then(resp2 => {
+                if (resp2.status) {
+                  return { status: true, data: resp.data }
+                } else {
+                  return { status: false, errMessage: 'Failed to save survey result!' }
+                }
+              })
+            } else {
+              return { status: false, errMessage: 'Failed to insert and get employee result: ' + resp.errMessage }
+            }
+          })
         }
       } else {
         return { status: false, errMessage: 'Survey and demographics are required for processing!' }

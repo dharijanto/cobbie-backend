@@ -170,6 +170,9 @@ class FSMService extends CRUDService {
               },
               setSurvey: function (topicName, topicId, value) {
                 return surveyService.setSurvey(userId, topicName, topicId, value)
+              },
+              processSurvey: function () {
+                return surveyService.processSurvey(userId)
               }
             }
           }

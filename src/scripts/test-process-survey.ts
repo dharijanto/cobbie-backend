@@ -17,8 +17,8 @@ const models = sequelizeSync(sequelize, {})
 sequelize.sync().then(() => {
   SequelizeService.initialize(sequelize, models)
   SurveyService.processSurvey(1).then(resp => {
-    // console.dir(resp)
-    if (resp.status && resp.data) {
+    console.dir(resp, { depth: 10 })
+    /* if (resp.status && resp.data) {
       const row = resp.data
       GSheetHelper.insertRows('data!A2:AH1000', [row]).then(resp => {
         if (resp.status && resp.data) {
@@ -37,6 +37,6 @@ sequelize.sync().then(() => {
       })
     } else {
       console.error('Failed: ' + resp.errMessage)
-    }
+    } */
   }).catch(console.error)
 })

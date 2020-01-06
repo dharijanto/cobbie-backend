@@ -1,6 +1,7 @@
 import * as path from 'path'
 
 import * as log from 'npmlog'
+import * as Promise from 'bluebird'
 import * as readline from 'readline'
 // import { google } from 'googleapis'
 const { google } = require('googleapis')
@@ -133,7 +134,7 @@ export default class {
     })
   }
 
-  static getRow (range) {
+  static getRow (range): Promise<NCResponse<{ values: any[][] }>> {
     const credentials = require(path.join(__dirname, '../../configs/google-api-credentials.json'))
     const { client_secret, client_id, redirect_uris } = credentials.installed
     const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
@@ -180,11 +181,23 @@ export default class {
     })
   }
 
+  static getRowNumber (range: SheetRange) {
+    const [, rowNumber] = range.startRange.match('[A-Z]+([0-9]+)') || []
+    const [, rowNumber2] = range.endRange.match('[A-Z]+([0-9]+)') || []
+
+    // Only if startRange and endRange are within the same row
+    if (rowNumber && rowNumber2 && rowNumber === rowNumber2) {
+      return parseInt(rowNumber, 10)
+    } else {
+      return null
+    }
+  }
+
   // Given a sheet
   static getNeighboringRow (range: SheetRange, rowOffset) {
     const { sheet, startRange, endRange } = range
-    const [, startCell, startRow] = startRange.match('([A-Z])([0-9]+)') || []
-    const [, endCell, endRow] = endRange.match('([A-Z])([0-9]+)') || []
+    const [, startCell, startRow] = startRange.match('([A-Z]+)([0-9]+)') || []
+    const [, endCell, endRow] = endRange.match('([A-Z]+)([0-9]+)') || []
 
     return {
       sheet,
