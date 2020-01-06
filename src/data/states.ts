@@ -151,10 +151,11 @@ const states = [
           { type: 'button', text: 'Male', action: `setDemographics('gender', [1, 'male'])` },
           { type: 'button', text: 'Female', action: `setDemographics('gender', [2, 'female'])` },
           // { type: 'text', text: 'Other', action: `setDemographics('gender', input)` },
-          { type: 'button', text: 'I prefer not to say', action: `setDemographics('age', ['', 'NA'])` }
+          { type: 'button', text: 'I prefer not to say', action: `setDemographics('gender', ['', 'NA'])` }
         ]
       },
-      {
+      // In Singapore, this is not applicable
+      /* {
         condition: null,
         messages: [
           'Are you Spanish or Latino?'
@@ -164,7 +165,7 @@ const states = [
           { type: 'button', text: 'No', action: `setDemographics('spanishOrLatino', [2, false])` },
           { type: 'button', text: 'I prefer not to say', action: `setDemographics('spanishOrLatino', ['', 'NA'])` }
         ]
-      },
+      }, */
       // For now, we skipped over non-button responses, as it's not yet implemented!
       /* {
         condition: null,

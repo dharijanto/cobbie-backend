@@ -83,7 +83,7 @@ export default class {
         ]
   */
   static insertRows (range: string, rows: any[][]): Promise<NCResponse<{ values: any[][], updatedRange: SheetRange }>> {
-    const credentials = require(path.join(__dirname, '../../configs/google-api-credentials.json'))
+    const credentials = require(AppConfig.GSHEET_API.GOOGLE_API_CREDENTIALS)
     const { client_secret, client_id, redirect_uris } = credentials.installed
     const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
     oAuth2Client.setCredentials(JSON.parse(AppConfig.GSHEET_API.OAUTH_TOKEN))
@@ -135,7 +135,7 @@ export default class {
   }
 
   static getRow (range): Promise<NCResponse<{ values: any[][] }>> {
-    const credentials = require(path.join(__dirname, '../../configs/google-api-credentials.json'))
+    const credentials = require(AppConfig.GSHEET_API.GOOGLE_API_CREDENTIALS)
     const { client_secret, client_id, redirect_uris } = credentials.installed
     const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
     oAuth2Client.setCredentials(JSON.parse(AppConfig.GSHEET_API.OAUTH_TOKEN))

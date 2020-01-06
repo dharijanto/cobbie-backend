@@ -134,7 +134,7 @@ function parseState (state) {
         // If there are 2 states defined through logic.response.nextState and logic.nextState, we use one
         // defined by logic.response
         if (!nextState) {
-          nextState = stateMap[currentLogic.nextState]
+          nextState = stateMap[currentLogic.nextState || '']
         }
 
         if (nextState) {

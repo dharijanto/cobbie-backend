@@ -19,7 +19,6 @@ const sitesDepsFiles = [
   'src/app/views/**',
   'src/cms/views/**',
   'src/app-config.js.dist',
-  'src/tests/mocha.opts',
   'package.json',
   '.gitignore'
 ]
