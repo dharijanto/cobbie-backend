@@ -3,6 +3,7 @@ import DemographicsService from '../services/demographics-service'
 import SequelizeService from '../services/sequelize-service'
 import { SiteData } from '../site-definitions'
 import FSMService from '../services/fsm-service'
+import UserService from '../services/user-service'
 
 const path = require('path')
 
@@ -46,6 +47,30 @@ class Controller extends BaseController {
       const response = req.body
       FSMService.submitFrontendResponse(userId, response).then(resp => {
         res.json(resp)
+      }).catch(next)
+    })
+
+    this.routePost('/api/v1/auth/login', (req, res, next) => {
+      const { username, password } = req.body
+      // HACK until we implement JWT
+      UserService.login(username, password).then(resp => {
+        if (resp.status && resp.data) {
+          res.json({ status: true, data: resp.data.id })
+        } else {
+          res.json({ status: false, errMessage: resp.errMessage })
+        }
+      }).catch(next)
+    })
+
+    this.routePost('/api/v1/auth/register', (req, res, next) => {
+      const { username, password, passwordConfirm, companyCode } = req.body
+      // HACK until we implement JWT
+      UserService.register(username, password, passwordConfirm, companyCode).then(resp => {
+        if (resp.status && resp.data) {
+          res.json({ status: true, data: resp.data.id })
+        } else {
+          res.json({ status: false, errMessage: resp.errMessage })
+        }
       }).catch(next)
     })
 

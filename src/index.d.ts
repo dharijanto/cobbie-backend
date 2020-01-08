@@ -19,6 +19,9 @@ interface Company extends BaseModel {
 }
 
 interface User extends BaseModel {
+  username: string
+  saltedPass: string
+  salt: string
   didIntroduction: boolean
 }
 

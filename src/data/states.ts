@@ -105,8 +105,8 @@ const states = [
         messages: [
           'We will help ${company.name} become a better place through collective feedbacks of its employees',
           'I will gather the experiences of all the employees throughout ${company.name}',
-          'All of these data that are gathered anonymously will be collected, and analysed',
-          'Through the analysis, I\'ll provide ${company.name} HRD with information on how it can be improved'
+          'All of this data will be gathered anonymously and analysed',
+          'I will analyze everyone\'s feedback and provide ${company.name} with information on how it can improve.'
         ],
         responses: [
           { type: 'button', text: 'Got it!' }
