@@ -88,7 +88,7 @@ const states = [
       {
         condition: null,
         messages: [
-          'What questions do you have for me? :)'
+          'Any further questions you have for me? :)'
         ],
         responses: [
           { type: 'button', text: 'How can we help improving ${company.name}?', nextState: 'MAIN_introduction_faq_how-cobbie-improve-corporation' },
@@ -245,6 +245,14 @@ const states = [
         responses: [
           { type: 'button', text: 'Sure thing, I have an undistracted 10 minutes!', action: 'createSurvey()' },
           { type: 'button', text: 'Umm, who are you again?', nextState: 'MAIN_introduction' }
+        ]
+      }, {
+        condition: null,
+        messages: [
+          'Ready for the first question? :)'
+        ],
+        responses: [
+          { type: 'button', text: 'Let\'s do it!' }
         ]
       }, {
         messages: [
@@ -516,7 +524,7 @@ const states = [
       {
         condition: null,
         messages: [
-          `That's it! Thanks for taking your time to take this survey!`
+          `That's it! Thanks for taking your time to take this survey! Please wait for a bit, while I'm processing your result :)`
         ],
         responses: [
           { type: 'button', text: `Alright!`, action: `processSurvey()` }

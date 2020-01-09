@@ -23,6 +23,7 @@ interface User extends BaseModel {
   saltedPass: string
   salt: string
   didIntroduction: boolean
+  companyId: number
 }
 
 interface Demographics extends BaseModel {

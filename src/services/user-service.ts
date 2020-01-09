@@ -82,7 +82,9 @@ class UserService extends CRUDService {
       }
 
       return super.readOne<Company>('Company', { uniqueCode: companyCode }).then(resp => {
-        if (!resp.status) {
+        if (resp.status && resp.data) {
+          data.companyId = resp.data.id
+        } else {
           errMessages.push('Company doesn\'t exist!')
         }
         if (errMessages.length) {

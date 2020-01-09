@@ -137,48 +137,50 @@ class FSMService extends CRUDService {
   private getUserEnvironment (userId): Promise<NCResponse<UserEnvironment>> {
     // Get user's company info
     return Promise.join<NCResponse<any>>(
-      super.readOne<Company>('Company', { userId }),
       super.readOne<User>('User', { id: userId }),
       super.rawReadOneQuery(`SELECT * FROM demographics WHERE userId=${userId} ORDER BY createdAt DESC LIMIT 1`),
       super.rawReadOneQuery(`SELECT * FROM surveys WHERE userId=${userId} ORDER BY createdAt DESC LIMIT 1`)
-    ).spread((resp1: NCResponse<Company>, resp2: NCResponse<User>,
+    ).spread((resp2: NCResponse<User>,
               resp3: NCResponse<Demographics>, resp4: NCResponse<Survey>) => {
       if (resp2.status && resp2.data) {
-        if (resp1.status && resp1.data) {
-          return {
-            status: true,
-            data: {
-              company: {
-                name: resp1.data.name
-              },
-              state: {
-                didIntroduction: resp2.data.didIntroduction,
-                didDemographics: resp3.status,
-                didSurvey: resp4.status
-              },
-              createDemographics: function () {
-                return demographicsService.createDemographics(userId)
-              },
-              setDemographics: function (key, value) {
-                return demographicsService.setDemographics(userId, key, value)
-              },
-              finishIntroduction: function () {
-                return userService.finishIntroduction(userId)
-              },
-              createSurvey: function () {
-                return surveyService.createSurvey(userId)
-              },
-              setSurvey: function (topicName, topicId, value) {
-                return surveyService.setSurvey(userId, topicName, topicId, value)
-              },
-              processSurvey: function () {
-                return surveyService.processSurvey(userId)
+        const user = resp2.data
+        return super.readOne<Company>('Company', { id: user.companyId }).then(resp1 => {
+          if (resp1.status && resp1.data) {
+            return {
+              status: true,
+              data: {
+                company: {
+                  name: resp1.data.name
+                },
+                state: {
+                  didIntroduction: user.didIntroduction,
+                  didDemographics: resp3.status,
+                  didSurvey: resp4.status
+                },
+                createDemographics: function () {
+                  return demographicsService.createDemographics(userId)
+                },
+                setDemographics: function (key, value) {
+                  return demographicsService.setDemographics(userId, key, value)
+                },
+                finishIntroduction: function () {
+                  return userService.finishIntroduction(userId)
+                },
+                createSurvey: function () {
+                  return surveyService.createSurvey(userId)
+                },
+                setSurvey: function (topicName, topicId, value) {
+                  return surveyService.setSurvey(userId, topicName, topicId, value)
+                },
+                processSurvey: function () {
+                  return surveyService.processSurvey(userId)
+                }
               }
             }
+          } else {
+            return { status: false, errMessage: `userId=${userId} doesn't have company defined!` }
           }
-        } else {
-          return { status: false, errMessage: `userId=${userId} doesn't have company defined!` }
-        }
+        })
       } else {
         return { status: false, errMessage: `userId=${userId} doesn't exist!` }
       }
