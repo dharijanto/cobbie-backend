@@ -53,7 +53,7 @@ const states = [
         condition: null,
         messages: [
           'Hi there, nice to meet you!',
-          'My name is Cobbie, your personal assistant :)'
+          'My name is Cobbie, your corporate coach :)'
         ],
         responses: [
           { type: 'button', text: 'Nice to meet you too, Cobbie!' }
@@ -65,7 +65,7 @@ const states = [
         messages: [
           'I\'m here to help you make ${company.name} the best place to work at!',
           'I will be asking you questions regarding to your experience working at ${company.name}. But don\'t fret, all the information is anonymous. I am fully committed to protect your privacy :) You can check http://googledocslink to learn more',
-          'I will then use the collective feedbacks from employees at ${company.name} to provide feedback to the HRD, which in turn could make company-wide initiatives to make everyone healthier, happier, and more productive'
+          'I will use your feedback to create a profile and then use the collective feedbacks from employees at ${company.name} to provide overview to the HRD, which in turn could make company-wide initiatives to make everyone healthier, happier, and more productive'
         ],
         responses: [
           { type: 'button', text: 'Got it!' }
@@ -91,7 +91,7 @@ const states = [
           'Any further questions you have for me? :)'
         ],
         responses: [
-          { type: 'button', text: 'How can we help improving ${company.name}?', nextState: 'MAIN_introduction_faq_how-cobbie-improve-corporation' },
+          { type: 'button', text: 'How can I make suggestions about how to improve ${company.name}?', nextState: 'MAIN_introduction_faq_how-cobbie-improve-corporation' },
           { type: 'button', text: 'Nope, no more question!', action: 'finishIntroduction()' }
         ]
       }
@@ -103,10 +103,9 @@ const states = [
       {
         condition: null,
         messages: [
-          'We will help ${company.name} become a better place through collective feedbacks of its employees',
+          'We will help ${company.name} become a better place through the collective feedbacks of its employees',
           'I will gather the experiences of all the employees throughout ${company.name}',
-          'All of this data will be gathered anonymously and analysed',
-          'I will analyze everyone\'s feedback and provide ${company.name} with information on how it can improve.'
+          'All of this data will be gathered anonymously and analysed so ${company.name} can make a better impact'
         ],
         responses: [
           { type: 'button', text: 'Got it!' }
@@ -238,12 +237,12 @@ const states = [
     logics: [
       {
         messages: [
-          'To get started improving ${company.name}, I need you to provide honest feedback abour your working experience',
+          'To get started improving ${company.name}, I need you to provide honest feedback about your working experience',
           `It's just as how very often people say that sharing is caring :)`,
-          `This survey is going to take 10 minutes to complete and needs to be taken without distractions.`
+          `This survey is going to take 5 minutes to complete and needs to be taken without distractions.`
         ],
         responses: [
-          { type: 'button', text: 'Sure thing, I have an undistracted 10 minutes!', action: 'createSurvey()' },
+          { type: 'button', text: 'Sure thing, I have an undistracted 5 minutes!', action: 'createSurvey()' },
           { type: 'button', text: 'Umm, who are you again?', nextState: 'MAIN_introduction' }
         ]
       }, {
@@ -256,11 +255,11 @@ const states = [
         ]
       }, {
         messages: [
-          `I feel there's too much work to be completed`
+          `I feel there is too much work to be completed`
         ],
         variables: {
           surveyTopicId: 1,
-          surveyTopicName: 'Task Volume'
+          surveyTopicName: 'Workload'
         },
         responses: surveyResponsesTemplates.template1
       }, {
@@ -269,7 +268,7 @@ const states = [
         ],
         variables: {
           surveyTopicId: 2,
-          surveyTopicName: 'Task Volume'
+          surveyTopicName: 'Workload'
         },
         responses: surveyResponsesTemplates.template1
       }, {
@@ -278,7 +277,7 @@ const states = [
         ],
         variables: {
           surveyTopicId: 3,
-          surveyTopicName: 'Task Volume'
+          surveyTopicName: 'Workload'
         },
         responses: surveyResponsesTemplates.template1
       }, {
@@ -317,9 +316,9 @@ const states = [
         ],
         variables: {
           surveyTopicId: 7,
-          surveyTopicName: 'Pay and Incentives'
+          surveyTopicName: 'Rewards'
         },
-        responses: surveyResponsesTemplates.template1
+        responses: surveyResponsesTemplates.template2
       }, {
         condition: null,
         messages: [
@@ -327,9 +326,9 @@ const states = [
         ],
         variables: {
           surveyTopicId: 8,
-          surveyTopicName: 'Pay and Incentives'
+          surveyTopicName: 'Rewards'
         },
-        responses: surveyResponsesTemplates.template1
+        responses: surveyResponsesTemplates.template2
       }, {
         condition: null,
         messages: [
@@ -337,39 +336,39 @@ const states = [
         ],
         variables: {
           surveyTopicId: 9,
-          surveyTopicName: 'Pay and Incentives'
+          surveyTopicName: 'Rewards'
         },
-        responses: surveyResponsesTemplates.template1
+        responses: surveyResponsesTemplates.template2
       }, {
         condition: null,
         messages: [
-          `I am comfortable communicating with those I work closely with.`
+          `I am not comfortable communicating with those I work closely with.`
         ],
         variables: {
           surveyTopicId: 10,
           surveyTopicName: 'Community'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
-          `I consider those I work with as my friends.`
+          `I consider those I work with as strangers.`
         ],
         variables: {
           surveyTopicId: 11,
           surveyTopicName: 'Community'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
-          `I feel comfortable around others at work.`
+          `I feel uncomfortable around others at work.`
         ],
         variables: {
           surveyTopicId: 12,
           surveyTopicName: 'Community'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
