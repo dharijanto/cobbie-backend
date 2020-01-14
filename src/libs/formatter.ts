@@ -1,3 +1,5 @@
+import * as moment from 'moment'
+
 export default class Formatter {
   static validateEmail (email) {
     let re = /(\S+@\S+\.\S+)|(^$)/
@@ -11,5 +13,9 @@ export default class Formatter {
 
   static validatePhoneNumber (phone: string) {
     return phone && phone.length > 5
+  }
+
+  static dateToString (date: any) {
+    return moment(date).format('YY-MM-DD hh:mm:ss')
   }
 }

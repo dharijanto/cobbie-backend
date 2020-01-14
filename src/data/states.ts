@@ -5,14 +5,6 @@ const surveyResponsesTemplates = {
     { type: 'button', text: '3 - Neutral', action: 'setSurvey(surveyTopicName, surveyTopicId, 3)' },
     { type: 'button', text: '2 - Disagree', action: 'setSurvey(surveyTopicName, surveyTopicId, 2)' },
     { type: 'button', text: '1 - Strongly Disagree', action: 'setSurvey(surveyTopicName, surveyTopicId, 1)' }
-  ],
-  // Reverse scoring
-  template2: [
-    { type: 'button', text: '5 - Strongly Agree', action: 'setSurvey(surveyTopicName, surveyTopicId, 1)' },
-    { type: 'button', text: '4 - Agree', action: 'setSurvey(surveyTopicName, surveyTopicId, 2)' },
-    { type: 'button', text: '3 - Neutral', action: 'setSurvey(surveyTopicName, surveyTopicId, 3)' },
-    { type: 'button', text: '2 - Disagree', action: 'setSurvey(surveyTopicName, surveyTopicId, 4)' },
-    { type: 'button', text: '1 - Strongly Disagree', action: 'setSurvey(surveyTopicName, surveyTopicId, 5)' }
   ]
 }
 
@@ -288,7 +280,7 @@ const states = [
           surveyTopicId: 4,
           surveyTopicName: 'Control'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
@@ -298,7 +290,7 @@ const states = [
           surveyTopicId: 5,
           surveyTopicName: 'Control'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
@@ -308,7 +300,7 @@ const states = [
           surveyTopicId: 6,
           surveyTopicName: 'Control'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
@@ -318,7 +310,7 @@ const states = [
           surveyTopicId: 7,
           surveyTopicName: 'Rewards'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
@@ -328,7 +320,7 @@ const states = [
           surveyTopicId: 8,
           surveyTopicName: 'Rewards'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
@@ -338,7 +330,7 @@ const states = [
           surveyTopicId: 9,
           surveyTopicName: 'Rewards'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
@@ -378,7 +370,7 @@ const states = [
           surveyTopicId: 13,
           surveyTopicName: 'Justice'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
@@ -388,7 +380,7 @@ const states = [
           surveyTopicId: 14,
           surveyTopicName: 'Justice'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
@@ -398,7 +390,7 @@ const states = [
           surveyTopicId: 15,
           surveyTopicName: 'Justice'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
@@ -406,9 +398,9 @@ const states = [
         ],
         variables: {
           surveyTopicId: 16,
-          surveyTopicName: 'Standards'
+          surveyTopicName: 'Values'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
@@ -416,9 +408,9 @@ const states = [
         ],
         variables: {
           surveyTopicId: 17,
-          surveyTopicName: 'Standards'
+          surveyTopicName: 'Values'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
@@ -426,9 +418,9 @@ const states = [
         ],
         variables: {
           surveyTopicId: 18,
-          surveyTopicName: 'Standards'
+          surveyTopicName: 'Values'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
@@ -498,7 +490,7 @@ const states = [
           surveyTopicId: 25,
           surveyTopicName: 'Personal Accomplishment'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
@@ -508,7 +500,7 @@ const states = [
           surveyTopicId: 26,
           surveyTopicName: 'Personal Accomplishment'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       }, {
         condition: null,
         messages: [
@@ -518,7 +510,7 @@ const states = [
           surveyTopicId: 27,
           surveyTopicName: 'Personal Accomplishment'
         },
-        responses: surveyResponsesTemplates.template2
+        responses: surveyResponsesTemplates.template1
       },
       {
         condition: null,

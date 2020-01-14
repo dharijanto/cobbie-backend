@@ -7,6 +7,10 @@ const log = require('npmlog')
 const TAG = 'UserService'
 
 class UserService extends CRUDService {
+  getUser (userId) {
+    return super.readOne<User>('User', { id: userId })
+  }
+
   finishIntroduction (userId) {
     return super.readOne<User>('User', { id: userId }).then(resp => {
       if (resp.status && resp.data) {

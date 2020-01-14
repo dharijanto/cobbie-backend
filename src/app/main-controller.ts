@@ -4,6 +4,7 @@ import SequelizeService from '../services/sequelize-service'
 import { SiteData } from '../site-definitions'
 import FSMService from '../services/fsm-service'
 import UserService from '../services/user-service'
+import SurveyService from '../services/survey-service'
 
 const path = require('path')
 
@@ -71,6 +72,13 @@ class Controller extends BaseController {
         } else {
           res.json({ status: false, errMessage: resp.errMessage })
         }
+      }).catch(next)
+    })
+
+    this.routeGet('/api/v1/employee/survey-result', (req, res, next) => {
+      const userId = req.query.userId
+      SurveyService.getSurveyResult(userId).then(resp => {
+        res.json(resp)
       }).catch(next)
     })
 

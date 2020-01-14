@@ -139,7 +139,7 @@ class FSMService extends CRUDService {
     return Promise.join<NCResponse<any>>(
       super.readOne<User>('User', { id: userId }),
       super.rawReadOneQuery(`SELECT * FROM demographics WHERE userId=${userId} ORDER BY createdAt DESC LIMIT 1`),
-      super.rawReadOneQuery(`SELECT * FROM surveys WHERE userId=${userId} ORDER BY createdAt DESC LIMIT 1`)
+      surveyService.hasFilledSurvey(userId)
     ).spread((resp2: NCResponse<User>,
               resp3: NCResponse<Demographics>, resp4: NCResponse<Survey>) => {
       if (resp2.status && resp2.data) {
