@@ -108,8 +108,8 @@ class SurveyService extends CRUDService {
         if (insertRow !== null) {
           // There's a difference of 1 row between 'data' table and 'employee' table
           const employeeRow = insertRow - 1
-          // Wait 1 sec to make sure google sheet has processed the data
-          return Promise.delay(1000).then(() => {
+          // Wait 3 sec to make sure google sheet has processed the data
+          return Promise.delay(3000).then(() => {
             const resultRange: SheetRange = {
               sheet: 'employee',
               startRange: `A${employeeRow}` ,
@@ -174,7 +174,7 @@ class SurveyService extends CRUDService {
           }
           return { status: true, data: result }
         } else {
-          return { status: false, erMessage: 'User has not taken a survey yet!' }
+          return { status: false, errMessage: 'Survey needs to be taken first!' }
         }
       })
     } else {
