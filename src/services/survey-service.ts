@@ -5,6 +5,54 @@ import DemographicsService from './demographics-service'
 import Formatter from '../libs/formatter'
 import userService from './user-service'
 
+const blurbs = {
+  'Workload': {
+    'Green': 'You do not stand out from your peers, and you probably manage your work, time, and people well.',
+    'Yellow': 'According to the survey, you might be having some difficulting managing the volume of work or the time needed to complete it. The issues are probably not intense, but they are evident. For your well-being, it might be beneficial to check out:',
+    'Red': 'According to the survey, managing the work and time to complete the work are issues that negatively impact your well-being. This is a major source of stress for you. Learn more about how to improve how you manage your workload:'
+  },
+  'Control': {
+    'Green': 'When compared to your peers, you show the a normal amount of personal autonomy and control over your work. You probably feel like you are in control of your work and your future. Read more about this area here:',
+    'Yellow': 'You might have concerns about how much influence you have on your own work and career. You may feel in comfortable one day then feel like there is little personal autonomy the next. Learn more about how to improve here:',
+    'Red': 'You probably feel like you have little influence over your work and career at the organization and this negatively impacts your well-being. Learn more about how to improve control over your work:'
+  },
+  'Rewards': {
+    'Green': 'You don’t stand out from your peers, and you feel that your work represents your rewards.',
+    'Yellow': 'You might occasionally feel that your work does not represent the rewards, monetarily or personal recognition. Learn more about improving a sense of rewards here:',
+    'Red': 'Chances are you feel that the work you are doing is not properly compensated. You probably feel that you aren\'t paid enough, don’t get enough recognition, or both, and this is negatively impacting your well-being. Learn more about how improve here:'
+  },
+  'Community': {
+    'Green': 'You share the same sense of community as your peers.',
+    'Yellow': 'You might feel disconnected from your peers at work, and it could be impacting your well-being. You might feel that working with others is uncomfortable and you might find it difficult to communicate. Learn more here:',
+    'Red': 'You probably feel like people at work make you feel uncomfortable or feel like strangers. This can cause discomfort in communicating with them. Learn more about how to improve your personal community at work:'
+  },
+  'Justice': {
+    'Green': 'You hold similar views to others at work about equality, favoritism, and justice at work.',
+    'Yellow': 'You might feel like there is favoritism, unfairness, or unprofessionalism at work, and this negatively impacts your well-being. Learn more about how to improve your sense of justice at work:',
+    'Red': 'Chances are you believe work is unjust and unfair. This is a source that impacts your well-being negatively. Learn more about how address:'
+  },
+  'Standards': {
+    'Green': 'You and your peers hold similar values when aligning with company standards.',
+    'Yellow': 'You might disagree or do not feel the aligned with the company values. This lack of congruency could be having an impact on your well-being. Learn more here about how to improve:',
+    'Red': 'You probably do not align with the company\'s values, and it probably negatively effects your well-being since your own values and standards do not align with the company. Learn more here:'
+  },
+  'Exhaustion': {
+    'Green': 'You have a similar mental and physical output as your peers.',
+    'Yellow': 'You are probably exhausted mentally or physically, and it is potentially a source impacting your well-being. Learn more here about how to improve:',
+    'Red': 'You exhaustion levels are probably a major source that impacts your well-being. You probably feel exhausted, tired, and, potentially, even sore often. Read more about how to improve:'
+  },
+  'Depersonalization': {
+    'Green': 'You have a similar outlook on your peers as others.',
+    'Yellow': 'You might occasionally view people as methods to accomplish goals, or you feel that others view you in the same way. This is probably a source that impacts your well-being negatively. Learn more here about how to improve:',
+    'Red': 'You probably have "lost yourself" and a sense of feelings for others may be lost. You might also believe that others view you as a method to get things done instead of viewing you as a person. Learn more here how to address this:'
+  },
+  'Personal Accomplishment': {
+    'Green': 'Your feelings of accomplishments and impact are similar to your peers.',
+    'Yellow': 'You might find it difficult to gain a sense of accomplishment and pride either because of your own efforts, the organization\'s goals in relation to your own, or those you work with. Learn more how ot improve your own sense of personal growth:',
+    'Red': 'You find it difficult to accomplish your own goals with major factors including your peers, organizational goals, and lack of meaning in your work. Learn more about how to address this:'
+  }
+}
+
 class SurveyService extends CRUDService {
   createSurvey (userId: number) {
     return super.create<Survey>('Survey', { userId })
@@ -29,7 +77,7 @@ class SurveyService extends CRUDService {
 
   hasFilledSurvey (userId: number): Promise<NCResponse<null>> {
     return super.rawReadOneQuery(
-      `SELECT * FROM surveys WHERE userId=${userId} AND result IS NOT NULL`
+      `SELECT * FROM surveys WHERE userId=${userId} AND result IS NOT NULL ORDER BY createdAt DESC LIMIT 1`
     ).then(resp => {
       if (resp.status) {
         return { status: true }
@@ -42,6 +90,12 @@ class SurveyService extends CRUDService {
   getLatestSurvey (userId: number) {
     return super.rawReadOneQuery(
       `SELECT * FROM surveys WHERE userId = ${userId} and result IS NOT NULL ORDER BY createdAt DESC LIMIT 1`
+    )
+  }
+
+  getLatestUnprocessedSurvey (userId: number) {
+    return super.rawReadOneQuery(
+      `SELECT * FROM surveys WHERE userId = ${userId} and result IS NULL ORDER BY createdAt DESC LIMIT 1`
     )
   }
 
@@ -89,7 +143,7 @@ class SurveyService extends CRUDService {
         if (resp.status && resp.data) {
           // Throw away information regarding userId, using slice()
           const surveyResult: any[] = (JSON.parse(resp.data.result).values)[0].slice(1)
-          const titles = ['Workload', 'Control', 'Reward', 'Community', 'Justice',
+          const titles = ['Workload', 'Control', 'Rewards', 'Community', 'Justice',
             'Standards', 'Exhaustion', 'Depersonalization', 'Personal Accomplishment']
           const keys = ['score', 'color']
           const result: any = {
@@ -108,15 +162,15 @@ class SurveyService extends CRUDService {
             const score = surveyResult[i]
             const sheetColor = surveyResult[i + titles.length]
             let color
-            if (sheetColor === 'Red') {
+            if (sheetColor.includes('Red')) {
               color = '#ff527f'
-            } else if (sheetColor === 'Green') {
+            } else if (sheetColor.includes('Green')) {
               color = '#51d69f'
             } else {
               // Yellow
               color = '#fdb83f'
             }
-            arr.push({ title, score, color })
+            arr.push({ title, score, sheetColor, color, blurb: blurbs[title][sheetColor] })
           }
           return { status: true, data: result }
         } else {
@@ -134,11 +188,12 @@ class SurveyService extends CRUDService {
     // 3. Update Survey entry with the result
 
     return Promise.join(
-      this.getLatestSurvey(userId),
+      this.getLatestUnprocessedSurvey(userId),
       DemographicsService.getLatestDemographics(userId),
       userService.getUser(userId)
     ).spread((resp, resp2, resp3) => {
       if (resp3.status && resp.data) {
+        const user = resp3.data
         if (resp.status && resp.data && resp2.status && resp2.data) {
           const demographics = resp2.data as Demographics
           const survey = resp.data as Survey
@@ -150,7 +205,7 @@ class SurveyService extends CRUDService {
             const demographicsValues = JSON.parse(demographics.value)
             const surveyValues: any[][] = JSON.parse(survey.value)
             const pairs: any[] = [
-              `userId: ${userId}, surveyId: ${survey.id}`,
+              `username: ${user.username} userId: ${userId}, surveyId: ${survey.id}`,
               String(demographicsValues.age[0]),
               String(demographicsValues.gender[0]),
               '', // demographicsValues.ethnicity[0],

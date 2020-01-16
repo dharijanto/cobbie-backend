@@ -75,6 +75,13 @@ class Controller extends BaseController {
       }).catch(next)
     })
 
+    this.routePost('/api/v1/employee/process-survey', (req, res, next) => {
+      const userId = req.query.userId
+      SurveyService.processSurvey(userId).then(resp => {
+        res.json(resp)
+      }).catch(next)
+    })
+
     this.routeGet('/api/v1/employee/survey-result', (req, res, next) => {
       const userId = req.query.userId
       SurveyService.getSurveyResult(userId).then(resp => {
