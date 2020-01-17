@@ -1,3 +1,226 @@
-html
-  body
-    h1= JSON.stringify(data)
+head
+  meta(charset='UTF-8')
+body
+  #chartContainer(style='height: 370px; max-width: 920px; margin: 0px auto;')
+  script(src='/assets/vendor/canvasjs/canvasjs.min.js')
+  //script(src='/assets/js/employer-app.js')
+  script.
+    window.onload = function () {
+    CanvasJS.addColorSet("MotivImpact",
+        [//colorSet Array
+          "#fbad17",
+          "#954c9d",
+          "#01bd70",
+          "#de88b9",
+          "#f26422",
+          "#5b8dca"
+        ]);
+    var chart = new CanvasJS.Chart("chartContainer", {
+      colorSet: "MotivImpact",
+      animationEnabled: true,
+      exportEnabled: true,
+      title:{
+        text: "Company Overview"
+      },
+      axisX: {
+        valueFormatString: "0"
+      },
+      axisY: {
+        includeZero: false,
+        minimum: -1,
+        maximum: 1
+      },
+      toolTip: {
+        shared: true
+      },
+      legend: {
+        cursor: "pointer",
+        itemclick: toggleDataSeries
+      },
+      data:   [
+        {
+          "type": "rangeColumn",
+          "name": "Exhaustion",
+          "showInLegend": true,
+          "yValueFormatString": "0",
+          "xValueFormatString": "0",
+          "dataPoints": [
+            {
+              "x": 0,
+              "label": "Workload",
+              "y": [
+                0,
+                -0.5970553545
+              ]
+            },
+            {
+              "x": 1,
+              "label": "Control",
+              "y": [
+                0,
+                0.1608431375
+              ]
+            },
+            {
+              "x": 2,
+              "label": "Rewards",
+              "y": [
+                0,
+                -0.1853505364
+              ]
+            },
+            {
+              "x": 3,
+              "label": "Community",
+              "y": [
+                0,
+                -0.5781344918
+              ]
+            },
+            {
+              "x": 4,
+              "label": "Justice",
+              "y": [
+                0,
+                0.1497900432
+              ]
+            },
+            {
+              "x": 5,
+              "label": "Standards",
+              "y": [
+                0,
+                0.1713999687
+              ]
+            }
+          ]
+        },
+        {
+          "type": "rangeColumn",
+          "name": "Depersonalization",
+          "showInLegend": true,
+          "yValueFormatString": "0",
+          "xValueFormatString": "0",
+          "dataPoints": [
+            {
+              "x": 0,
+              "label": "Workload",
+              "y": [
+                0,
+                -0.3015216177
+              ]
+            },
+            {
+              "x": 1,
+              "label": "Control",
+              "y": [
+                0,
+                0.1435659825
+              ]
+            },
+            {
+              "x": 2,
+              "label": "Rewards",
+              "y": [
+                0,
+                -0.3128060139
+              ]
+            },
+            {
+              "x": 3,
+              "label": "Community",
+              "y": [
+                0,
+                -0.6971928307
+              ]
+            },
+            {
+              "x": 4,
+              "label": "Justice",
+              "y": [
+                0,
+                0.08441047139
+              ]
+            },
+            {
+              "x": 5,
+              "label": "Standards",
+              "y": [
+                0,
+                0.119046299
+              ]
+            }
+          ]
+        },
+        {
+          "type": "rangeColumn",
+          "name": "Personal Accomplishment",
+          "showInLegend": true,
+          "yValueFormatString": "0",
+          "xValueFormatString": "0",
+          "dataPoints": [
+            {
+              "x": 0,
+              "label": "Workload",
+              "y": [
+                0,
+                0.1346723454
+              ]
+            },
+            {
+              "x": 1,
+              "label": "Control",
+              "y": [
+                0,
+                -0.6876265749
+              ]
+            },
+            {
+              "x": 2,
+              "label": "Rewards",
+              "y": [
+                0,
+                -0.1379468571
+              ]
+            },
+            {
+              "x": 3,
+              "label": "Community",
+              "y": [
+                0,
+                0.0519866926
+              ]
+            },
+            {
+              "x": 4,
+              "label": "Justice",
+              "y": [
+                0,
+                -0.5531794311
+              ]
+            },
+            {
+              "x": 5,
+              "label": "Standards",
+              "y": [
+                0,
+                -0.6880071147
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    );
+    chart.render();
+
+    function toggleDataSeries(e) {
+      if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+        e.dataSeries.visible = false;
+      } else {
+        e.dataSeries.visible = true;
+      }
+      e.chart.render();
+    }
+
+    }

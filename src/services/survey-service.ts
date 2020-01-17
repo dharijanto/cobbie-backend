@@ -200,10 +200,12 @@ class SurveyService extends CRUDService {
           if (survey.result) {
             return { status: false, errMessage: `Survey ${survey.id} has already been processed!` }
           } else {
-            // TODO
-            // 1. Format the data in accordance to Sheet layout
+            // Format the data in accordance to Sheet layout, make sure to update this
+            // when the Sheet's format changes
             const demographicsValues = JSON.parse(demographics.value)
             const surveyValues: any[][] = JSON.parse(survey.value)
+
+            // Insert demographics
             const pairs: any[] = [
               `username: ${user.username} userId: ${userId}, surveyId: ${survey.id}`,
               String(demographicsValues.age[0]),
@@ -213,6 +215,7 @@ class SurveyService extends CRUDService {
               String(demographicsValues.maritalStatus[0]),
               String(demographicsValues.yearsWithCompany[0])
             ]
+            // Insert survey results
             surveyValues.forEach(([topic, questionNumber, answer]) => {
               // Answer with questionNumber 1 starts on the 8th column of the row
               // hence we offset by 6

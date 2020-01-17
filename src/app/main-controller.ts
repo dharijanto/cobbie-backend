@@ -26,8 +26,7 @@ class Controller extends BaseController {
     })
 
     this.routeGet('/', (req, res, next) => {
-      // res.render('index')
-      res.send('hello')
+      res.render('index')
     })
 
     this.routeGet('/api/v1/chatbot/current-state', (req, res, next) => {

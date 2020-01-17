@@ -320,6 +320,8 @@ class FSMService extends CRUDService {
             runningStates = this.generateNewRunningStates(userEnv)
           }
           return { status: true, data: runningStates } as NCResponse<RunningStates>
+        }).catch(err => {
+          return { status: false, errMessage: 'Failed to execute action: ' + err.message }
         })
       } else {
         return { status: false, errMessage: `Invalid frontendResponse: ${resp.errMessage}` }
