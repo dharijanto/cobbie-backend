@@ -5,6 +5,7 @@ import { SiteData } from '../site-definitions'
 import FSMService from '../services/fsm-service'
 import UserService from '../services/user-service'
 import SurveyService from '../services/survey-service'
+import EmployerService from '../services/employer-service'
 
 const path = require('path')
 
@@ -86,6 +87,14 @@ class Controller extends BaseController {
       SurveyService.getSurveyResult(userId).then(resp => {
         res.json(resp)
       }).catch(next)
+    })
+
+    this.routeGet('/api/v1/employer/company-overview', (req, res, next) => {
+      EmployerService.getSurveyCorrelation().then(resp => {
+        res.json(resp)
+      }).catch(err => {
+        console.dir(err)
+      })
     })
 
     /* this.routeUse((new CredentialController(initData)).getRouter()) */

@@ -1,8 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 
-const Inotify = require('inotify').Inotify
-const inotify = new Inotify()
+// const Inotify = require('inotify').Inotify
+// const inotify = new Inotify()
 
 const browserify = require('browserify')
 const log = require('fancy-log')
@@ -64,6 +64,7 @@ fs.readdirSync(sourceDir).filter(filename => {
 
 // Start inotify watcher to watch for newly created folder, so that we don't have to re-build
 // when we added new folder
+/*
 inotify.addWatch({
   path: path.join('src'),
   watch_for: Inotify.IN_CREATE | Inotify.IN_ONLYDIR,
@@ -98,6 +99,7 @@ inotify.addWatch({
     }
   }
 })
+*/
 
 function getAssetFolder(outputFolder, moduleName) {
   if (outputFolder === 'app') {

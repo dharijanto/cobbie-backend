@@ -5,7 +5,8 @@
   "main": "main.js",
   "browserify-shim": {
     "cmsRootPath": "global:rootPath",
-    "jquery": "global:$"
+    "jquery": "global:$",
+    "canvasjs": "global:CanvasJS"
   },
   "browserify": {
     "transform": [
@@ -32,7 +33,6 @@
     "browserify": "^14.4.0",
     "browserify-shim": "^3.8.14",
     "codemirror": "^5.31.0",
-    "inotify": "^1.4.6",
     "jQuery.print": "^1.5.1",
     "lodash": "^4.17.11",
     "marked": "^0.3.6",
