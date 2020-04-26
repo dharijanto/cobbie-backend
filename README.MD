@@ -3,7 +3,7 @@
 ## Live Demo
 - A react native frontend application uses this: https://expo.io/@adennyh/cobbie-frontend
 
-![Screenshot 1](https://nusantara-cloud.com/img/cobbie/1.jpg)
+![Screenshot 1](https://nusantara-cloud.com/img/cobbie/1.jpg?new)
 ![Screenshot 2](https://nusantara-cloud.com/img/cobbie/2.jpg)
 ![Screenshot 3](https://nusantara-cloud.com/img/cobbie/3.jpg)
 
@@ -12,7 +12,8 @@
 We were exploring a startup idea to assist HR on
 figuring out the well-being of their employees. The idea is to create
 a chatbot-buddy that personally interacts with each of the employees,
-asking some sort of surveys to continually monitor their mental well-being.
+continously asking some short of surveys to monitor their mental well-being.
+This was a proof-of-concept we build in order to gauge potential investor's interest.
 
 This code base powers the backend of the chatbot. It uses finite-state-machine described in
 a typescript definition (src/data/sets.ts) that can easily be modified to program the bot, such
