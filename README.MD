@@ -19,6 +19,8 @@ This code base powers the backend of the chatbot. It uses finite-state-machine d
 a typescript definition (src/data/sets.ts) that can easily be modified to program the bot, such
 as to modify the text prompt or the multiple-choice input.
 
+The frontend React Native counterpart can be found here: https://github.com/dharijanto/cobbie-chatbot-reactnative-frontend
+
 ## API
 ### [GET] /api/v1/chatbot/current-state
 * Response:
