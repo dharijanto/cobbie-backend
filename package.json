@@ -36,7 +36,7 @@
     "es6-dynamic-template": "^1.0.5",
     "fancylog": "^4.0.2",
     "googleapis": "^46.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "moment": "^2.24.0",
     "readline-sync": "^1.4.10"
   }
