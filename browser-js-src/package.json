@@ -35,7 +35,7 @@
     "codemirror": "^5.31.0",
     "jQuery.print": "^1.5.1",
     "lodash": "^4.17.11",
-    "marked": "^0.3.6",
+    "marked": "^4.0.10",
     "nc-image-picker": "^1.2.1",
     "nc-input-library": "^1.5.2",
     "toastr": "^2.1.4",
