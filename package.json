@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "bluebird": "^3.7.2",
-    "es6-dynamic-template": "^1.0.5",
+    "es6-dynamic-template": "^2.0.0",
     "fancylog": "^4.0.2",
     "googleapis": "^46.0.0",
     "lodash": "^4.17.15",
